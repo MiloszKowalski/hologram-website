@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "hologram-website",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -10,5 +10,9 @@
   },
   "dependencies": {
     "astro": "^5.9.1"
-  }
+  },
+  "devDependencies": {
+    "nx": "21.1.3"
+  },
+  "nx": {}
 }
