@@ -1,5 +1,5 @@
 {
-  "name": "cloudflare-worker",
+  "name": "hologram-website",
   "compatibility_date": "2025-06-08",
   "assets": {
     "directory": "./dist"
