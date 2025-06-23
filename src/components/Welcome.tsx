@@ -1,82 +1,153 @@
-import { useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { useEffect, useRef } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   Environment,
   CameraControls,
   MeshTransmissionMaterial,
   useGLTF,
+  useFBX,
+  SpotLight,
+  useAnimations,
+  VideoTexture,
+  useVideoTexture,
 } from "@react-three/drei";
 import { useControls } from "leva";
 import { Perf } from "r3f-perf";
-import type { Group, Object3DEventMap } from "three";
+import {
+  MeshBasicMaterial,
+  MeshNormalMaterial,
+  PerspectiveCamera,
+  type SpotLight as SpotLightType,
+  Vector3,
+  type Group,
+  type Object3DEventMap,
+  Plane,
+} from "three";
 
 export default function App() {
   return (
-    <Canvas shadows camera={{ position: [5, -2.5, -5], fov: 35 }}>
-      <ambientLight intensity={0.75} />
-      <Torus />
-      <CameraControls makeDefault />
-      <Environment
-        files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/dancing_hall_1k.hdr"
-        background
-      />
+    <Canvas shadows camera={{ fov: 20 }}>
+      <Scene />
+
       <Perf position="top-left" style={{ transform: "scale(0.8)" }} />
     </Canvas>
   );
 }
 
-function Torus() {
+function Scene() {
   const ref = useRef<Group<Object3DEventMap> | null>(null);
-  const { scene, animations, meshes } = useGLTF("../models/untitled.glb");
+  const { scene, meshes, animations, cameras } = useGLTF(
+    "../models/hologram.glb"
+  );
 
   const modelRef = useRef(scene);
+  const screen = useRef(meshes["Spotlight_target_screen"]);
+  console.log({ meshes, animations, cameras, scene });
 
-  const config = useControls({
+  var camera = useRef<CameraControls>(null);
+
+  const config = {
     meshPhysicalMaterial: false,
     transmissionSampler: false,
     backside: true,
-    backsideThickness: { value: 2, min: -10, max: 10 },
-    samples: { value: 10, min: 0, max: 32, step: 1 },
-    resolution: { value: 2048, min: 256, max: 2048, step: 256 },
-    backsideResolution: { value: 1024, min: 32, max: 2048, step: 256 },
-    transmission: { value: 1, min: 0, max: 1 },
-    roughness: { value: 0.0, min: 0, max: 1, step: 0.01 },
-    ior: { value: 1.5, min: 1, max: 5, step: 0.01 },
-    thickness: { value: 0.25, min: 0, max: 10, step: 0.01 },
-    chromaticAberration: { value: 0.4, min: 0, max: 1 },
-    anisotropy: { value: 0.3, min: 0, max: 1, step: 0.01 },
-    distortion: { value: 0.0, min: 0, max: 1, step: 0.01 },
-    distortionScale: { value: 0.3, min: 0.01, max: 1, step: 0.01 },
-    temporalDistortion: { value: 0.65, min: 0, max: 1, step: 0.01 },
-    attenuationDistance: { value: 0.5, min: 0, max: 2.5, step: 0.01 },
-    clearcoat: { value: 0, min: 0, max: 1 },
+    backsideThickness: -2.8,
+    samples: 6,
+    resolution: 1024,
+    backsideResolution: 1024,
+    transmission: 1,
+    roughness: 0.1,
+    ior: 1.23,
+    thickness: 0.47,
+    chromaticAberration: 0.19,
+    anisotropy: 0.45,
+    distortion: 0.0,
+    distortionScale: 0.09,
+    temporalDistortion: 0.65,
+    attenuationDistance: 1.17,
+    clearcoat: 0,
     attenuationColor: "#ffffff",
     color: "white",
-  });
+  };
   useFrame((state, delta) => {
     if (ref.current) {
-      ref.current.rotation.y += delta;
+      ref.current.rotation.z -= delta;
     }
   });
+
+  useThree((state) => {
+    if (camera.current) {
+      camera.current.setLookAt(0, 0, -9, 0, 0, -20);
+      camera.current.zoomTo(0.4);
+      camera.current.truck(0, -1);
+      //camera.current.set(30, 0.75, 12);
+      //camera.current.setOrbitPoint(0, 0, 0);
+    }
+
+    var light1 = scene.children.find((x) => x.name === "Wall_light_blue")!
+      .children[0] as SpotLightType;
+    light1.penumbra = 0.2;
+    light1.intensity = 800;
+
+    var light2 = scene.children.find((x) => x.name === "Wall_light_pink")!
+      .children[0] as SpotLightType;
+    light2.penumbra = 0.2;
+    light2.intensity = 600;
+    // meshes["Room"]!.material = new MeshBasicMaterial({ color: "#00ff00" });
+  });
+
+  const videoTexture = useVideoTexture("../videoplayback.mp4", {});
+
   return (
     <group>
-      <group ref={ref}>
-        <primitive
-          position={[0, 1, 0]}
-          ref={modelRef}
-          object={meshes["Curve"]!}
-        >
-          <meshNormalMaterial />
-        </primitive>
+      <primitive position={[2, 2, 0]} object={scene} />
+
+      <primitive position={[2, 2, -92]} object={meshes["Plane"]!}>
+        <meshPhongMaterial
+          map={videoTexture}
+          side={0}
+          emissiveMap={videoTexture}
+          emissive="#ffffff"
+          emissiveIntensity={1.5}
+          toneMapped={false}
+        />
+      </primitive>
+      <pointLight intensity={900} position={[0, -10, -70]} color="#2C67FF" />
+      <SpotLight
+        distance={65}
+        color="#2C67FF"
+        angle={2.5}
+        position={[-16, 8, -15]}
+        attenuation={20}
+        anglePower={1.5}
+        target={screen.current!}
+      />
+      <CameraControls ref={camera} makeDefault />
+      {/* <SpotLight
+        distance={65}
+        color="#2C67FF"
+        angle={2.5}
+        position={[-15, 7, -15]}
+        attenuation={20}
+        anglePower={1.5}
+        target={screen.current!}
+      /> */}
+      <group>
+        <primitive position={[-4, 1, -20]} ref={ref} object={meshes["Logo"]!} />
       </group>
-      <mesh position={[0, 0, 0]}>
-        <primitive position={[0, 0, 0]} ref={modelRef} object={meshes["Cube"]!}>
-          {config.meshPhysicalMaterial ? (
-            <meshPhysicalMaterial {...config} color={config.color} />
-          ) : (
-            <MeshTransmissionMaterial {...config} toneMapped={true} />
-          )}
+      <mesh position={[-4, 0, -20]}>
+        <primitive
+          position={[0, 0, 0]}
+          ref={modelRef}
+          object={meshes["Crystal_1"]!}
+        >
+          <MeshTransmissionMaterial {...config} toneMapped={true} />
         </primitive>
+
+        <primitive
+          position={[0, 0, 0]}
+          ref={modelRef}
+          object={meshes["Crystal_2"]!}
+        ></primitive>
       </mesh>
     </group>
   );
