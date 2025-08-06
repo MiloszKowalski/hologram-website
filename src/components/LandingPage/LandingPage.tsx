@@ -457,7 +457,7 @@ export default function LandingPage() {
                     fullVideoUrl: "https://www.youtube.com/watch?v=zyXzkmzrRVc",
                     stills: [
                       {
-                        thumbSrc: "projects/infakt/1.png",
+                        thumbSrc: "projects/infakt/miniatura.png",
                       },
                       {
                         thumbSrc: "projects/infakt/2.png",
@@ -553,7 +553,7 @@ export default function LandingPage() {
                     fullVideoUrl: "https://www.youtube.com/watch?v=zJk3HJUfEus",
                     stills: [
                       {
-                        thumbSrc: "projects/widok/1.png",
+                        thumbSrc: "projects/widok/miniatura.png",
                       },
                       {
                         thumbSrc: "projects/widok/2.png",
@@ -883,7 +883,7 @@ export default function LandingPage() {
                     fullVideoUrl: "https://www.youtube.com/watch?v=4DTFXpAZ6bg",
                     stills: [
                       {
-                        thumbSrc: "projects/walizka/5.png",
+                        thumbSrc: "projects/walizka/miniatura.png",
                       },
                       {
                         thumbSrc: "projects/walizka/1.png",
