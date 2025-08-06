@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 115.11 191.07">
+  <defs>
+    <style>
+      .cls-1 {
+        stroke: url(#Gradient_bez_nazwy_292-8);
+      }
+
+      .cls-1,
+      .cls-2,
+      .cls-3,
+      .cls-4,
+      .cls-5,
+      .cls-6,
+      .cls-7,
+      .cls-8,
+      .cls-9,
+      .cls-10,
+      .cls-11,
+      .cls-12,
+      .cls-13 {
+        fill: none;
+        stroke-miterlimit: 10;
+        stroke-width: .6px;
+      }
+
+      .cls-2 {
+        stroke: url(#Gradient_bez_nazwy_292-6);
+      }
+
+      .cls-3 {
+        stroke: url(#Gradient_bez_nazwy_292-3);
+      }
+
+      .cls-4 {
+        stroke: url(#Gradient_bez_nazwy_292-2);
+      }
+
+      .cls-5 {
+        stroke: url(#Gradient_bez_nazwy_292-13);
+      }
+
+      .cls-6 {
+        stroke: url(#Gradient_bez_nazwy_292);
+      }
+
+      .cls-7 {
+        stroke: url(#Gradient_bez_nazwy_292-9);
+      }
+
+      .cls-8 {
+        stroke: url(#Gradient_bez_nazwy_292-4);
+      }
+
+      .cls-9 {
+        stroke: url(#Gradient_bez_nazwy_292-5);
+      }
+
+      .cls-10 {
+        stroke: url(#Gradient_bez_nazwy_292-11);
+      }
+
+      .cls-11 {
+        stroke: url(#Gradient_bez_nazwy_292-7);
+      }
+
+      .cls-12 {
+        stroke: url(#Gradient_bez_nazwy_292-12);
+      }
+
+      .cls-13 {
+        stroke: url(#Gradient_bez_nazwy_292-10);
+      }
+    </style>
+    <radialGradient id="Gradient_bez_nazwy_292" data-name="Gradient bez nazwy 292" cx="57.54" cy="95.55" fx="57.54"
+      fy="95.55" r=".46" gradientUnits="userSpaceOnUse">
+      <stop offset=".45" stop-color="#181716" />
+      <stop offset=".65" stop-color="#2c67ff" />
+      <stop offset=".81" stop-color="#ffafdf" />
+      <stop offset="1" stop-color="#ffe2ff" />
+    </radialGradient>
+    <radialGradient id="Gradient_bez_nazwy_292-2" data-name="Gradient bez nazwy 292" cx="113.97" cy="90.41" fx="113.97"
+      fy="90.41" r=".32" xlink:href="#Gradient_bez_nazwy_292" />
+    <radialGradient id="Gradient_bez_nazwy_292-3" data-name="Gradient bez nazwy 292" cx="85.99" cy="111.61" fx="85.99"
+      fy="111.61" r="24.8" xlink:href="#Gradient_bez_nazwy_292" />
+    <radialGradient id="Gradient_bez_nazwy_292-4" data-name="Gradient bez nazwy 292" cx="28.98" cy="160.86" fx="28.98"
+      fy="160.86" r="29.6" xlink:href="#Gradient_bez_nazwy_292" />
+    <radialGradient id="Gradient_bez_nazwy_292-5" data-name="Gradient bez nazwy 292" cx="29.25" cy="113.31" fx="29.25"
+      fy="113.31" r="24.03" xlink:href="#Gradient_bez_nazwy_292" />
+    <radialGradient id="Gradient_bez_nazwy_292-6" data-name="Gradient bez nazwy 292" cx="57.54" cy="131.08" fx="57.54"
+      fy="131.08" r="34.72" xlink:href="#Gradient_bez_nazwy_292" />
+    <radialGradient id="Gradient_bez_nazwy_292-7" data-name="Gradient bez nazwy 292" cx="86.11" cy="30.23" fx="86.11"
+      fy="30.23" r="29.62" xlink:href="#Gradient_bez_nazwy_292" />
+    <radialGradient id="Gradient_bez_nazwy_292-8" data-name="Gradient bez nazwy 292" cx="29.09" cy="79.38" fx="29.09"
+      fy="79.38" r="24.74" xlink:href="#Gradient_bez_nazwy_292" />
+    <radialGradient id="Gradient_bez_nazwy_292-9" data-name="Gradient bez nazwy 292" cx="29.13" cy="95.6" fx="29.13"
+      fy="95.6" r="26.58" xlink:href="#Gradient_bez_nazwy_292" />
+    <radialGradient id="Gradient_bez_nazwy_292-10" data-name="Gradient bez nazwy 292" cx="114.12" cy="91.18" fx="114.12"
+      fy="91.18" r=".51" xlink:href="#Gradient_bez_nazwy_292" />
+    <radialGradient id="Gradient_bez_nazwy_292-11" data-name="Gradient bez nazwy 292" cx="85.67" cy="77.79" fx="85.67"
+      fy="77.79" r="23.94" xlink:href="#Gradient_bez_nazwy_292" />
+    <radialGradient id="Gradient_bez_nazwy_292-12" data-name="Gradient bez nazwy 292" cx="85.96" cy="95.5" fx="85.96"
+      fy="95.5" r="26.6" xlink:href="#Gradient_bez_nazwy_292" />
+    <radialGradient id="Gradient_bez_nazwy_292-13" data-name="Gradient bez nazwy 292" cx="57.53" cy="60.02" fx="57.53"
+      fy="60.02" r="34.72" xlink:href="#Gradient_bez_nazwy_292" />
+  </defs>
+  <g>
+    <polygon class="cls-6" points="57.53 95.52 57.57 95.56 57.54 95.58 57.51 95.55 57.53 95.52" />
+    <path class="cls-4" d="M114.02,90.64c-.03-.15-.06-.3-.09-.45.03.15.06.3.09.45Z" />
+    <path class="cls-3"
+      d="M57.57,95.56l15.05,16.16c9.07,9.74,24.45,10.29,34.19,1.22,6.01-5.6,8.51-13.6,7.42-21.2,1.2,7.17-.78,14.81-6.09,20.52l-17.53,18.83-33.05-35.5.02-.03Z" />
+    <path class="cls-8"
+      d="M24.49,131.08l33.05,35.5-15.38,16.52c-9.07,9.74-24.45,10.29-34.19,1.22h0c-9.74-9.07-10.29-24.45-1.22-34.19l17.73-19.05Z" />
+    <path class="cls-9"
+      d="M42.39,111.78l15.12-16.24.03.04-33.05,35.5-17.42-18.7c-3.53-3.8-5.59-8.45-6.22-13.26.82,5.15,3.26,10.07,7.35,13.88,9.74,9.07,25.12,8.52,34.19-1.22Z" />
+    <polygon class="cls-2" points="57.54 95.58 90.59 131.08 57.54 166.58 24.49 131.08 57.54 95.58" />
+    <path class="cls-11"
+      d="M72.94,7.98c9.07-9.74,24.45-10.29,34.19-1.22h0c9.74,9.07,10.29,24.45,1.22,34.19l-17.76,19.08L57.53,24.53l15.41-16.55Z" />
+    <path class="cls-1"
+      d="M57.51,95.55l-15.03-16.14c-9.07-9.74-24.45-10.29-34.19-1.22h0C2.35,83.72-.15,91.6.85,99.12c-1.13-7.11.87-14.66,6.13-20.31l17.5-18.79,33.05,35.5-.02.03Z" />
+    <path class="cls-7"
+      d="M8.29,78.19h0c9.74-9.07,25.12-8.52,34.19,1.22l15.03,16.14-15.12,16.24c-9.07,9.74-24.45,10.29-34.19,1.22-4.09-3.81-6.54-8.73-7.35-13.88-1-7.52,1.5-15.4,7.44-20.93Z" />
+    <path class="cls-13" d="M114.22,91.74c-.06-.37-.12-.74-.2-1.1.07.37.15.73.2,1.1Z" />
+    <path class="cls-10"
+      d="M72.72,79.29l-15.15,16.27-.03-.04,33.05-35.5,17.44,18.73c3.09,3.31,5.03,7.29,5.91,11.44-1.06-4.5-3.4-8.75-7.02-12.12-9.74-9.07-25.12-8.52-34.19,1.22Z" />
+    <path class="cls-12"
+      d="M106.8,112.94c-9.74,9.07-25.12,8.52-34.19-1.22l-15.05-16.16,15.15-16.27c9.07-9.74,24.45-10.29,34.19-1.22,3.62,3.37,5.97,7.62,7.02,12.12.03.15.06.3.09.45.08.36.14.73.2,1.1,1.09,7.6-1.4,15.6-7.42,21.2Z" />
+    <polygon class="cls-5" points="24.48 60.02 57.53 24.53 90.58 60.02 57.53 95.52 24.48 60.02" />
+  </g>
+</svg>
