@@ -326,10 +326,10 @@ export default function Scene() {
   }, [$isIntroFinished, document.documentElement]);
 
   const onIncline = useCallback((opt: PerformanceMonitorApi) => {
-    config.resolution = Math.min(config.resolution * 2, 4096);
-    config.backsideResolution = Math.min(config.backsideResolution * 2, 2048);
-    setConfig({ ...config, backside: true });
-    setIsDofEnabled(true);
+    // config.resolution = Math.min(config.resolution * 2, 4096);
+    // config.backsideResolution = Math.min(config.backsideResolution * 2, 2048);
+    // setConfig({ ...config, backside: true });
+    // setIsDofEnabled(true);
   }, []);
 
   const onDecline = useCallback((opt: PerformanceMonitorApi) => {
@@ -347,7 +347,7 @@ export default function Scene() {
 
   const onChange = useCallback((opt: PerformanceMonitorApi) => {}, []);
 
-  //usePerformanceMonitor({ onIncline, onDecline, onFallback, onChange });
+  usePerformanceMonitor({ onIncline, onDecline, onFallback, onChange });
 
   const videoTexture = useVideoTexture("../videoplayback.mp4", {});
   const bumpTexture = useTexture("bake_disp.png");
