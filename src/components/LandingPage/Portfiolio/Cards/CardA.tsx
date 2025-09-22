@@ -43,11 +43,11 @@ export const CardA = ({ project }: CardAProps) => {
           `p-4 cursor-pointer group aspect-video rounded-2xl w-full h-auto absolute`
         )}
       >
-        <div className="absolute w-full -bottom-12 md:-bottom-14 left-1/6 md:left-1/4 z-20">
-          <h3 className="mt-1 text-white text-3xl md:text-4xl font-bold text-shadow-md text-shadow-black-500">
+        <div className="absolute whitespace-pre md:whitespace-normal w-full top-[92%] md:top-[97%] left-1/5 md:left-1/5 z-20">
+          <h3 className="mt-1 text-white text-xl md:text-3xl font-bold text-shadow-md text-shadow-black-500">
             {project.name}
           </h3>
-          <h4 className="-mt-2 text-white text-xl md:text-2xl  text-shadow-md text-shadow-black-500 font-[Chivo_Mono]">
+          <h4 className="-mt-1 text-white text-sm md:text-xl  text-shadow-md text-shadow-black-500 font-[Chivo_Mono]">
             {project.clientName}
           </h4>
         </div>
@@ -58,7 +58,7 @@ export const CardA = ({ project }: CardAProps) => {
           <img
             className="block rounded-xl w-full h-full"
             crossOrigin="anonymous"
-            src={project.stills[0]?.thumbSrc}
+            src={project.thumbSrc}
           />
         </div>
       </article>

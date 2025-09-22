@@ -37,16 +37,16 @@ export const Welcome = () => {
     >
       <Icon className="absolute top-2/5 left-1/2 md:top-3/8 md:translate-y-[10%] md:-left-28 w-48 md:w-48 opacity-30 md:opacity-40" />
       <div id="welcome-text">
-        <h1 className="text-white text-2xl mb-4 font-extrabold">
+        <h1 className="text-white text-xl mb-8 font-extrabold">
           Witaj w Studio Hologram.
         </h1>
-        <p className="text-white text-md leading-8 font-[Chivo_Mono]">
+        <p className="text-white text-sm leading-6 font-[Chivo_Mono]">
           Jesteśmy warszawskim domem produkcyjnym, w którym każdy film nabiera
           życia.
           <br />
           Od 6 lat łączymy ludzi i ich historie, które zostawiają ślad.
         </p>
-        <p className="text-white text-md font-[Chivo_Mono]">
+        <p className="text-white text-sm font-[Chivo_Mono]">
           <br />
           Rozgość się i zobacz nasze rzeczy.
         </p>

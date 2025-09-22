@@ -10,4 +10,5 @@ export interface Project {
   dop: string;
   stills: Still[];
   fullVideoUrl: string;
+  thumbSrc: string;
 }

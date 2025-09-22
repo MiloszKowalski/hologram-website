@@ -375,10 +375,8 @@ export default function LandingPage() {
                     director: "Tomek Wilczyński",
                     dop: "Piotr Kosmalski",
                     fullVideoUrl: "https://www.youtube.com/watch?v=ZHMxzwOSkIU",
+                    thumbSrc: "projects/prosze_tancz/miniatura.png",
                     stills: [
-                      {
-                        thumbSrc: "projects/prosze_tancz/miniatura.png",
-                      },
                       {
                         thumbSrc: "projects/prosze_tancz/1.png",
                       },
@@ -391,12 +389,17 @@ export default function LandingPage() {
                       {
                         thumbSrc: "projects/prosze_tancz/4.png",
                       },
-
                       {
                         thumbSrc: "projects/prosze_tancz/5.png",
                       },
                       {
                         thumbSrc: "projects/prosze_tancz/6.png",
+                      },
+                      {
+                        thumbSrc: "projects/prosze_tancz/7.png",
+                      },
+                      {
+                        thumbSrc: "projects/prosze_tancz/8.png",
                       },
                       {
                         thumbSrc: "projects/prosze_tancz/9.png",
@@ -409,12 +412,13 @@ export default function LandingPage() {
                     director: "Mac Adamczak",
                     dop: "Aleksy Kubiak",
                     fullVideoUrl: "https://www.youtube.com/watch?v=kXeNzSWxDmA",
+                    thumbSrc: "projects/piegi/miniatura.png",
                     stills: [
                       {
-                        thumbSrc: "projects/piegi/miniatura.png",
+                        thumbSrc: "projects/piegi/1.png",
                       },
                       {
-                        thumbSrc: "projects/piegi/1.png",
+                        thumbSrc: "projects/piegi/2.png",
                       },
                       {
                         thumbSrc: "projects/piegi/3.png",
@@ -455,9 +459,10 @@ export default function LandingPage() {
                     director: "Mac Adamczak",
                     dop: "Maciej Ryter",
                     fullVideoUrl: "https://www.youtube.com/watch?v=zyXzkmzrRVc",
+                    thumbSrc: "projects/infakt/miniatura.png",
                     stills: [
                       {
-                        thumbSrc: "projects/infakt/miniatura.png",
+                        thumbSrc: "projects/infakt/1.png",
                       },
                       {
                         thumbSrc: "projects/infakt/2.png",
@@ -485,6 +490,7 @@ export default function LandingPage() {
                     director: "Tomek Wilczyński",
                     dop: "Dima Zinych",
                     fullVideoUrl: "https://www.youtube.com/watch?v=MWSsUxALs0w",
+                    thumbSrc: "projects/windows/miniatura.png",
                     stills: [
                       {
                         thumbSrc: "projects/windows/1.png",
@@ -499,6 +505,9 @@ export default function LandingPage() {
                         thumbSrc: "projects/windows/4.png",
                       },
                       {
+                        thumbSrc: "projects/windows/5.png",
+                      },
+                      {
                         thumbSrc: "projects/windows/6.png",
                       },
                       {
@@ -510,11 +519,12 @@ export default function LandingPage() {
                     ],
                   },
                   {
-                    name: `Listy do M.6\n- rozstania i powroty`,
+                    name: `Listy do M.6\n- rozstania i powroty`,
                     clientName: "TVN Discovery Warner Bros.",
                     director: "Jan Steifer",
                     dop: "Stasiek Wójcik",
                     fullVideoUrl: "https://www.youtube.com/watch?v=tzSzi1fw8LI",
+                    thumbSrc: "projects/listy/miniatura.png",
                     stills: [
                       {
                         thumbSrc: "projects/listy/1.png",
@@ -527,6 +537,9 @@ export default function LandingPage() {
                       },
                       {
                         thumbSrc: "projects/listy/4.png",
+                      },
+                      {
+                        thumbSrc: "projects/listy/5.png",
                       },
                       {
                         thumbSrc: "projects/listy/6.png",
@@ -547,13 +560,14 @@ export default function LandingPage() {
                   },
                   {
                     name: `Widok`,
-                    clientName: "Jan Rapowanie / Frankleen / 2020",
+                    clientName: "Jan Rapowanie / Frankleen\n/ 2020",
                     director: "Mac Adamczak",
                     dop: "Montell Taraschewski",
                     fullVideoUrl: "https://www.youtube.com/watch?v=zJk3HJUfEus",
+                    thumbSrc: "projects/widok/miniatura.png",
                     stills: [
                       {
-                        thumbSrc: "projects/widok/miniatura.png",
+                        thumbSrc: "projects/widok/1.png",
                       },
                       {
                         thumbSrc: "projects/widok/2.png",
@@ -578,6 +592,7 @@ export default function LandingPage() {
                     director: "Tomek Wilczyński",
                     dop: "Dima Zinych",
                     fullVideoUrl: "https://www.youtube.com/watch?v=ml9Ktn073So",
+                    thumbSrc: "projects/blekit/miniatura.jpg",
                     stills: [
                       {
                         thumbSrc: "projects/blekit/1.jpg",
@@ -590,6 +605,9 @@ export default function LandingPage() {
                       },
                       {
                         thumbSrc: "projects/blekit/4.jpg",
+                      },
+                      {
+                        thumbSrc: "projects/blekit/5.png",
                       },
                       {
                         thumbSrc: "projects/blekit/6.png",
@@ -615,15 +633,13 @@ export default function LandingPage() {
                     ],
                   },
                   {
-                    name: `Michał Sikorski x Szymon Majewski`,
+                    name: `Michał Sikorski\nx Szymon Majewski`,
                     clientName: "x-kom",
                     director: "Tomek Wilczyński",
                     dop: "Montell Taraschewski",
                     fullVideoUrl: "https://www.instagram.com/reel/DDG38iVIOoV/",
+                    thumbSrc: "projects/xkom/miniatura.png",
                     stills: [
-                      {
-                        thumbSrc: "projects/xkom/miniatura.png",
-                      },
                       {
                         thumbSrc: "projects/xkom/1.png",
                       },
@@ -653,18 +669,22 @@ export default function LandingPage() {
                     director: "Rodzeństwo Ejryszew (DRAŻE) ",
                     dop: "Łukasz Łatanik / Wiktor Ejryszew",
                     fullVideoUrl: "https://www.youtube.com/watch?v=HMIbm_l0nMg",
+                    thumbSrc: "projects/odnowa/miniatura.png",
                     stills: [
                       {
-                        thumbSrc: "projects/odnowa/miniatura.png",
+                        thumbSrc: "projects/odnowa/1.png",
                       },
                       {
-                        thumbSrc: "projects/odnowa/1.png",
+                        thumbSrc: "projects/odnowa/2.png",
                       },
                       {
                         thumbSrc: "projects/odnowa/3.png",
                       },
                       {
                         thumbSrc: "projects/odnowa/4.png",
+                      },
+                      {
+                        thumbSrc: "projects/odnowa/5.png",
                       },
                       {
                         thumbSrc: "projects/odnowa/6.png",
@@ -701,15 +721,16 @@ export default function LandingPage() {
                     director: "Maciej Aleksander Bierut",
                     dop: "Karol Łakomiec",
                     fullVideoUrl: "https://www.youtube.com/watch?v=34454W2JG1c",
+                    thumbSrc: "projects/milczysz/miniatura.png",
                     stills: [
-                      {
-                        thumbSrc: "projects/milczysz/miniatura.png",
-                      },
                       {
                         thumbSrc: "projects/milczysz/1.png",
                       },
                       {
                         thumbSrc: "projects/milczysz/2.png",
+                      },
+                      {
+                        thumbSrc: "projects/milczysz/3.png",
                       },
                       {
                         thumbSrc: "projects/milczysz/4.png",
@@ -728,10 +749,8 @@ export default function LandingPage() {
                     director: "Marek Sobkiewicz-Hirsch",
                     dop: "Dima Zinych",
                     fullVideoUrl: "https://www.youtube.com/watch?v=AWR-bck1Ul8",
+                    thumbSrc: "projects/cheetos/miniatura.png",
                     stills: [
-                      {
-                        thumbSrc: "projects/cheetos/miniatura.png",
-                      },
                       {
                         thumbSrc: "projects/cheetos/1.png",
                       },
@@ -770,10 +789,8 @@ export default function LandingPage() {
                     director: "Tomek Wilczyński",
                     dop: "Dima Zinych",
                     fullVideoUrl: "https://www.youtube.com/watch?v=J1A7lFi16hg",
+                    thumbSrc: "projects/bezemnie/miniatura.jpg",
                     stills: [
-                      {
-                        thumbSrc: "projects/bezemnie/miniatura.jpg",
-                      },
                       {
                         thumbSrc: "projects/bezemnie/1.png",
                       },
@@ -797,6 +814,9 @@ export default function LandingPage() {
                       },
                       {
                         thumbSrc: "projects/bezemnie/8.jpg",
+                      },
+                      {
+                        thumbSrc: "projects/bezemnie/9.jpg",
                       },
                       {
                         thumbSrc: "projects/bezemnie/10.jpg",
@@ -827,9 +847,10 @@ export default function LandingPage() {
                     director: "Tomek Wilczyński",
                     dop: "Adam Andrzejewski",
                     fullVideoUrl: "https://www.youtube.com/watch?v=bhv0jkADve8",
+                    thumbSrc: "projects/mata/miniatura.png",
                     stills: [
                       {
-                        thumbSrc: "projects/mata/miniatura.png",
+                        thumbSrc: "projects/mata/1.png",
                       },
                       {
                         thumbSrc: "projects/mata/2.png",
@@ -845,15 +866,16 @@ export default function LandingPage() {
                     director: "Daniel Jaroszek",
                     dop: "Mateusz Dziekoński",
                     fullVideoUrl: "https://www.youtube.com/watch?v=JUEe70iQBDc",
+                    thumbSrc: "projects/blizej/miniatura.png",
                     stills: [
-                      {
-                        thumbSrc: "projects/blizej/miniatura.png",
-                      },
                       {
                         thumbSrc: "projects/blizej/1.png",
                       },
                       {
                         thumbSrc: "projects/blizej/2.png",
+                      },
+                      {
+                        thumbSrc: "projects/blizej/3.png",
                       },
                       {
                         thumbSrc: "projects/blizej/4.png",
@@ -877,14 +899,12 @@ export default function LandingPage() {
                   },
                   {
                     name: `Dziewczyna z walizką`,
-                    clientName: "48HFP / 77. Festiwal Filmowy w Cannes",
+                    clientName: "48HFP /\n77. Festiwal Filmowy w Cannes",
                     director: "Tomek Wilczyński",
                     dop: "Stasiek Wójcik",
                     fullVideoUrl: "https://www.youtube.com/watch?v=4DTFXpAZ6bg",
+                    thumbSrc: "projects/walizka/miniatura.png",
                     stills: [
-                      {
-                        thumbSrc: "projects/walizka/miniatura.png",
-                      },
                       {
                         thumbSrc: "projects/walizka/1.png",
                       },
