@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { PerformanceMonitor } from "@react-three/drei";
 import { Leva } from "leva";
@@ -47,16 +47,19 @@ const iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
 
 var observer = ScrollTrigger.normalizeScroll(true);
 
+const showDesktopNavBar = () => {
+  isMenuVisible.set(isIntroFinished.get() && !modalContents.get() && !isMobile);
+};
+
+const hideDesktopNavBar = () => {
+  isMenuVisible.set(isIntroFinished.get() && !modalContents.get() && isMobile);
+};
+
 ScrollTrigger.observe({
   target: "#hero",
-  onUp: () =>
-    isMenuVisible.set(
-      isIntroFinished.get() && !modalContents.get() && !isMobile
-    ),
-  onDown: () =>
-    isMenuVisible.set(
-      isIntroFinished.get() && !modalContents.get() && isMobile
-    ),
+  onUp: showDesktopNavBar,
+  onDown: hideDesktopNavBar,
+  dragMinimum: isMobile ? 200 : 9999999,
 });
 
 // document.onclick = () => {
@@ -212,20 +215,52 @@ export default function LandingPage() {
       >
         <div
           className={cn(
-            `w-full h-28 md:h-36 p-8 md:p-8 md:px-16 opacity-0 from-[rgba(0,0,0,0.75)] transition-opacity to-transparent bg-gradient-to-b flex justify-between relative`,
+            `w-full h-28 md:h-28 p-8 opacity-0 from-[rgba(0,0,0,0.75)] transition-opacity to-transparent bg-gradient-to-b flex items-center justify-between relative`,
             {
               ["opacity-100"]: $isMenuVisible,
             }
           )}
         >
-          <img
-            id="logo"
-            src={logo.src}
-            alt=""
-            width="172px"
-            height="48px"
-            className="h-[48px] w-[172px] opacity-0 z-20"
-          />
+          <div
+            onPointerEnter={showDesktopNavBar}
+            onPointerLeave={hideDesktopNavBar}
+            className="pointer-events-auto flex w-full items-center justify-between md:h-28 p-0 md:p-8 md:px-16"
+          >
+            <img
+              id="logo"
+              src={logo.src}
+              alt=""
+              width="172px"
+              height="48px"
+              className="h-[48px] w-[172px] opacity-0 z-20"
+            />
+            <nav className="text-white hidden font-semibold pointer-events-auto text-xs  gap-20 tracking-[0.5em] items-center uppercase md:flex">
+              <a
+                onClick={() => desktopGoTo(showreelPosition.get())}
+                className="nav-link opacity-0 cursor-pointer hover:text-pink-300 transition-colors"
+              >
+                showreel
+              </a>
+              <a
+                onClick={() => desktopGoTo("#welcome", "65% center")}
+                className="nav-link opacity-0  cursor-pointer hover:text-pink-300 transition-colors"
+              >
+                portfolio
+              </a>
+              <a
+                onClick={() => desktopGoTo("#about", "top top")}
+                className="nav-link opacity-0  cursor-pointer hover:text-pink-300 transition-colors"
+              >
+                o nas
+              </a>
+              <a
+                onClick={() => desktopGoTo("#contact", "65% center")}
+                className="nav-link opacity-0  cursor-pointer hover:text-pink-300 transition-colors"
+              >
+                kontakt
+              </a>
+            </nav>
+          </div>
           <button
             id="hamburger"
             className={`menu md:hidden pointer-events-auto opacity-0 z-20 ${
@@ -285,32 +320,6 @@ export default function LandingPage() {
               </a>
             </nav>
           </div>
-          <nav className="text-white hidden font-semibold pointer-events-auto text-xs  gap-20 tracking-[0.5em] items-center uppercase md:flex">
-            <a
-              onClick={() => desktopGoTo(showreelPosition.get())}
-              className="nav-link opacity-0 cursor-pointer hover:text-pink-300 transition-colors"
-            >
-              showreel
-            </a>
-            <a
-              onClick={() => desktopGoTo("#welcome", "65% center")}
-              className="nav-link opacity-0  cursor-pointer hover:text-pink-300 transition-colors"
-            >
-              portfolio
-            </a>
-            <a
-              onClick={() => desktopGoTo("#about", "top top")}
-              className="nav-link opacity-0  cursor-pointer hover:text-pink-300 transition-colors"
-            >
-              o nas
-            </a>
-            <a
-              onClick={() => desktopGoTo("#contact", "65% center")}
-              className="nav-link opacity-0  cursor-pointer hover:text-pink-300 transition-colors"
-            >
-              kontakt
-            </a>
-          </nav>
         </div>
         <PortfolioDetailsModal />
         <IOSOrientationModal />

@@ -21,7 +21,7 @@ export const Bio = ({ imgSrc, name, description, left }: BioProps) => {
       linesClass: "bio-line",
       onSplit: (self) => {
         return gsap.from(self.lines, {
-          y: 100,
+          y: 0,
           opacity: 0,
           stagger: 0.05,
           duration: 0.75,
@@ -44,14 +44,14 @@ export const Bio = ({ imgSrc, name, description, left }: BioProps) => {
     >
       <img className="rounded-full w-3/5" src={imgSrc} />
       <h2
-        className={`text-white text-3xl font-[Aktiv_Grotesk_Ex] font-extrabold whitespace-pre-line relative -top-8 ${
+        className={`text-white text-2xl font-[Aktiv_Grotesk_Ex] font-extrabold whitespace-pre-line relative -top-8 ${
           !left && "-left-8"
         } md:right-10 ${left}`}
       >
         {name}
       </h2>
       <div id={`bio-text-${nameWithoutSpaces}`} className="relative md:left-8">
-        <p className="font-[Chivo_Mono] text-white md:w-[35ch] whitespace-pre-line text-justify">
+        <p className="font-[Chivo_Mono] text-white md:w-[35ch] whitespace-pre-line text-sm text-justify">
           {description}
         </p>
       </div>

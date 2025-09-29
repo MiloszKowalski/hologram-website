@@ -81,7 +81,7 @@ export const PortfolioDetailsModal = () => {
       <div
         ref={backdropRef}
         className={cn(
-          `hidden opacity-0 pointer-events-auto -mt-28 md:-mt-36 w-screen relative h-[100vh] bg-[rgba(0,0,0,0.58)] backdrop-blur-xs`
+          `hidden opacity-0 pointer-events-auto -mt-28 md:-mt-28 w-screen relative h-[100vh] bg-[rgba(0,0,0,0.58)] backdrop-blur-xs`
         )}
       />
       <div

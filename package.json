@@ -21,6 +21,8 @@
     "@types/react-dom": "^19.1.6",
     "astro": "^5.12.8",
     "clsx-for-tailwind": "^1.0.0",
+    "embla-carousel-auto-scroll": "^8.6.0",
+    "embla-carousel-react": "^8.6.0",
     "gsap": "^3.13.0",
     "leva": "^0.10.0",
     "nanostores": "^1.0.1",
