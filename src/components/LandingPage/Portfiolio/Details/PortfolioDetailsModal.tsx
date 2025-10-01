@@ -43,9 +43,9 @@ export const PortfolioDetailsModal = () => {
         duration: 0.5,
       });
     } else {
-      stillsRef.current?.scrollTo(0, 0);
       isMenuVisible.set(false);
       scrollSmoother?.paused(true);
+      stillsRef.current?.scrollTo(0, 0);
       gsap.to(backdropRef.current, {
         display: "block",
         opacity: 1,
@@ -63,10 +63,9 @@ export const PortfolioDetailsModal = () => {
   }, [$isModalOpen]);
 
   const closeModal = useCallback((e: MouseEvent) => {
-    console.log(e);
     setTimeout(() => {
       isModalOpen.set(false);
-      setTimeout(() => modalContents.set(null), 500);
+      setTimeout(() => modalContents.set(null), 50);
     }, 50);
   }, []);
 

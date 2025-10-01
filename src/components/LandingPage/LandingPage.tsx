@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { PerformanceMonitor } from "@react-three/drei";
+import { PerformanceMonitor, Preload } from "@react-three/drei";
 import { Leva } from "leva";
 import { Perf } from "r3f-perf";
 import { SRGBColorSpace, ACESFilmicToneMapping } from "three";
@@ -16,6 +16,7 @@ import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { Flip } from "gsap/Flip";
 import { useStore } from "@nanostores/react";
 import {
+  canRotateUsingPointer,
   isIntroFinished,
   isMenuVisible,
   modalContents,
@@ -48,18 +49,24 @@ const iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
 var observer = ScrollTrigger.normalizeScroll(true);
 
 const showDesktopNavBar = () => {
-  isMenuVisible.set(isIntroFinished.get() && !modalContents.get() && !isMobile);
+  isMenuVisible.set(
+    canRotateUsingPointer.get() ||
+      (isIntroFinished.get() && !modalContents.get() && !isMobile)
+  );
 };
 
 const hideDesktopNavBar = () => {
-  isMenuVisible.set(isIntroFinished.get() && !modalContents.get() && isMobile);
+  isMenuVisible.set(
+    canRotateUsingPointer.get() ||
+      (isIntroFinished.get() && !modalContents.get() && isMobile)
+  );
 };
 
 ScrollTrigger.observe({
   target: "#hero",
   onUp: showDesktopNavBar,
   onDown: hideDesktopNavBar,
-  dragMinimum: isMobile ? 200 : 9999999,
+  dragMinimum: isMobile ? 100 : 9999999,
 });
 
 // document.onclick = () => {
@@ -93,6 +100,7 @@ export default function LandingPage() {
   const $isIntroFinished = useStore(isIntroFinished);
   const $pinnedChild = useStore(pinnedChild);
   let $isMenuVisible = useStore(isMenuVisible);
+  let $canRotateUsingPointer = useStore(canRotateUsingPointer);
   const $smoothTouch = useStore(smoothTouch);
   const [introFinishedOffset, setIntroFinishedOffset] = useState(false);
 
@@ -215,7 +223,7 @@ export default function LandingPage() {
       >
         <div
           className={cn(
-            `w-full h-28 md:h-28 p-8 opacity-0 from-[rgba(0,0,0,0.75)] transition-opacity to-transparent bg-gradient-to-b flex items-center justify-between relative`,
+            `w-full h-28 md:h-28 p-8 opacity-0 from-[rgba(0,0,0,0.75)] transition-opacity duration-500 to-transparent bg-gradient-to-b flex items-center justify-between relative`,
             {
               ["opacity-100"]: $isMenuVisible,
             }
@@ -287,11 +295,13 @@ export default function LandingPage() {
           </button>
           <div
             id="mobile-menu-shadow"
-            className="absolute opacity-0 z-10 w-[120%] h-[120vh] top-[0%] left-[-10%] from-50% bg-gradient-to-b from-[rgba(0,0,0,0.75)] to-transparent blur-xl backdrop-blur-xl"
+            className="absolute md:hidden opacity-0 z-10 w-[120%] h-[120vh] top-[0%] left-[-10%] from-50% bg-gradient-to-b from-[rgba(0,0,0,0.75)] to-transparent blur-xl backdrop-blur-xl"
           ></div>
           <div
             id="mobile-menu"
-            className="absolute h-screen opacity-0 invisible left-[50%] top-0 translate-x-[-50%] z-20"
+            className={
+              "absolute md:hidden h-screen opacity-0 invisible left-[50%] top-0 translate-x-[-50%] z-20"
+            }
           >
             <nav className="text-white md:hidden font-semibold pointer-events-auto text-l tracking-[0.5em] h-[50vh] my-[25vh] justify-between uppercase flex flex-col items-center">
               <a
@@ -324,14 +334,29 @@ export default function LandingPage() {
         <PortfolioDetailsModal />
         <IOSOrientationModal />
         <BraveOrientationModal />
+        <FadeInOverlay />
       </div>
 
       <div id="smooth-wrapper">
         <div id="smooth-content">
           <div className="h-screen" id="hero">
-            <FadeInOverlay />
             <Leva hidden />
-
+            <div
+              className={cn(
+                "absolute transition-all z-[99999] duration-300 right-10 bottom-6",
+                {
+                  ["opacity-0"]: $isIntroFinished,
+                  ["invisible"]: $isIntroFinished,
+                }
+              )}
+            >
+              <button
+                onClick={() => isIntroFinished.set(true)}
+                className="cursor-pointer bg-transparent border-2 font-[Chivo_Mono] border-white rounded-4xl px-8 py-2 text-white text-sm font-bold  "
+              >
+                POMIŃ ▶
+              </button>
+            </div>
             <Canvas
               style={{
                 pointerEvents: isMobile ? "none" : "auto",
@@ -344,17 +369,23 @@ export default function LandingPage() {
                 toneMappingExposure: 1,
                 outputColorSpace: SRGBColorSpace,
                 powerPreference: "high-performance",
-                transmissionResolutionScale: 0.5,
+                transmissionResolutionScale: 0.25,
               }}
             >
-              <PerformanceMonitor
-                bounds={(refreshRate) => [60, refreshRate]}
-                factor={0.5}
-                step={0.2}
-              >
-                <Scene />
-                {/* <Perf  position="top-left" style={{ transform: "scale(0.8)" }} /> */}
-              </PerformanceMonitor>
+              <Suspense fallback={null}>
+                <PerformanceMonitor
+                  bounds={(refreshRate) => [60, refreshRate]}
+                  factor={0.5}
+                  step={0.2}
+                >
+                  <Scene />
+                  <Preload all />
+                  {/* <Perf
+                    position="top-left"
+                    style={{ transform: "scale(0.8)" }}
+                  /> */}
+                </PerformanceMonitor>
+              </Suspense>
             </Canvas>
           </div>
 

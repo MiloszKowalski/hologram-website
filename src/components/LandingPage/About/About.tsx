@@ -2,7 +2,7 @@ import { Bio } from "./Bio/Bio";
 
 export const About = () => {
   return (
-    <section id="about" className="mt-36">
+    <section id="about" className="mt-48">
       <h1 className="text-4xl text-center text-white font-bold">O NAS</h1>
       <div className="flex flex-col md:flex-row justify-center gap-12 md:gap-28 pb-48 mt-16">
         <Bio

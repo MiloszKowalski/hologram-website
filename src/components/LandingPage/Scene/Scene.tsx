@@ -1,5 +1,7 @@
 import { useGSAP } from "@gsap/react";
 import {
+  AdaptiveDpr,
+  BakeShadows,
   CameraControls,
   MeshTransmissionMaterial,
   SpotLight,
@@ -20,7 +22,7 @@ import {
 } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { type Group, type Object3DEventMap } from "three";
+import { Vector2, Vector3, type Group, type Object3DEventMap } from "three";
 import gsap from "gsap";
 import { useNoScrollOnLoad } from "./hooks/useNoScrollOnLoad";
 import { useWallLights } from "./hooks/useWallLights";
@@ -43,6 +45,9 @@ export default function Scene() {
 
   const crystalRef = useRef(scene);
   const logoRef = useRef<Group<Object3DEventMap> | null>(null);
+  const previousPointerRef = useRef<Vector3>(new Vector3());
+  const menuTimeoutRef = useRef<NodeJS.Timeout>(null);
+  const introAnimationRef = useRef<gsap.core.Tween>(null);
 
   const $isIntroFinished = useStore(isIntroFinished);
   const $isMenuVisible = useStore(isMenuVisible);
@@ -72,18 +77,26 @@ export default function Scene() {
 
   useEffect(() => {
     if (cameraRef.current && introCameraRotationRef.current) {
-      gsap.to(introCameraRotationRef.current, {
-        x: 0,
-        duration: 2,
-        onComplete: () => {
-          isIntroFinished.set(true);
-          isMenuVisible.set(true);
-        },
-        ease: "power2.inOut",
-        delay: 1,
-      });
+      introAnimationRef.current ??= gsap
+        .to(introCameraRotationRef.current, {
+          x: 0,
+          duration: 2,
+          onComplete: () => {
+            isIntroFinished.set(true);
+            isMenuVisible.set(true);
+          },
+          ease: "power2.inOut",
+          delay: 1,
+        })
+        .pause(0);
+
+      if ($isIntroFinished) {
+        introAnimationRef.current.pause(introAnimationRef.current.endTime());
+      } else {
+        introAnimationRef.current.restart(true);
+      }
     }
-  }, []);
+  }, [$isIntroFinished]);
 
   useGSAP(() => {
     if ($isMenuVisible) {
@@ -333,14 +346,17 @@ export default function Scene() {
   }, []);
 
   const onDecline = useCallback((opt: PerformanceMonitorApi) => {
-    config.resolution = Math.max(config.resolution / 2, 256);
-    config.backsideResolution = Math.max(config.backsideResolution / 2, 64);
-    config.samples = Math.max(config.samples / 2, 2);
+    setIsDofEnabled(false);
+    const minRes = isMobile ? 256 : 768;
+    const minBackRes = isMobile ? 16 : 64;
+    const minSamples = isMobile ? 2 : 3;
+    config.resolution = Math.max(config.resolution / 2, minRes);
+    config.backsideResolution = Math.max(
+      config.backsideResolution / 2,
+      minBackRes
+    );
+    config.samples = Math.max(config.samples / 2, minSamples);
     setConfig({ ...config, backside: true });
-
-    if (config.resolution === 256) {
-      setIsDofEnabled(false);
-    }
   }, []);
 
   const onFallback = useCallback((opt: PerformanceMonitorApi) => {}, []);
@@ -423,6 +439,30 @@ export default function Scene() {
       const y = pointer.y;
       const dampingFactor = 6;
       const additionalVerticalDampingFactor = 2;
+      isMenuVisible.set(true);
+      // const currentCameraPosition = new Vector3();
+      // cameraRef.current?.getPosition(currentCameraPosition);
+
+      // if (
+      //   previousPointerRef.current.x === currentCameraPosition.x &&
+      //   previousPointerRef.current.y === currentCameraPosition.y &&
+      //   previousPointerRef.current.z === currentCameraPosition.z
+      // ) {
+      //   if (!menuTimeoutRef.current) {
+      //     menuTimeoutRef.current = setTimeout(
+      //       () => isMenuVisible.set(true),
+      //       1000
+      //     );
+      //   }
+      // } else {
+      //   if (menuTimeoutRef.current) {
+      //     clearTimeout(menuTimeoutRef.current);
+      //     menuTimeoutRef.current = null;
+      //   }
+      //   isMenuVisible.set(false);
+      // }
+
+      // cameraRef.current?.getPosition(previousPointerRef.current);
 
       if (cameraRef.current && !isMobile) {
         cameraRef.current.rotateTo(
@@ -439,6 +479,8 @@ export default function Scene() {
 
   return (
     <group>
+      <BakeShadows />
+      <AdaptiveDpr pixelated />
       <EffectComposer autoClear={true}>
         <Bloom opacity={1} />
         <Noise opacity={0.5} blendFunction={BlendFunction.COLOR_DODGE} />
