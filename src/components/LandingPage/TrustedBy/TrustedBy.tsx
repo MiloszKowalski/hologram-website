@@ -16,7 +16,7 @@ const Image = ({ src, padding }: ImageProps) => {
 
 export const TrustedBy = () => {
   return (
-    <section className="mt-24">
+    <section className="mt-40 md:mt-24">
       <h2 className="text-3xl mt-0 font-bold text-white text-center">
         KLIENCI
       </h2>

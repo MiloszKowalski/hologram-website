@@ -140,7 +140,7 @@ export const PortfolioDetailsModal = () => {
             {$modalContents?.stills.map((x, i) => (
               <div
                 className={cn(
-                  `w-full aspect-video rounded-2xl overflow-clip`
+                  `w-full rounded-2xl overflow-clip`
                   // {
                   //   ["relative md:-top-24"]: i % 2 === 0,
                   // }

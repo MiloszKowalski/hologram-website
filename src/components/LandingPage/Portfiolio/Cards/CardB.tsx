@@ -16,7 +16,7 @@ export const CardB = ({ project }: CardBProps) => {
         backgroundImage: `url(thumb_bg_1.png)`,
         backgroundSize: "cover",
       }}
-      className="p-4 my-4 md:my-0 cursor-pointer group md:ml-auto aspect-video rounded-2xl w-5/6 mx-auto md:mx-0 md:w-3/7 h-auto relative"
+      className="p-4 my-4 md:my-0 cursor-pointer group md:ml-auto aspect-video rounded-2xl w-11/12 mx-auto md:mx-0 md:w-3/7 h-auto relative"
     >
       <div className="absolute whitespace-pre md:whitespace-normal w-full md:w-full top-[94%] md:top-[97%] left-1/16 md:left-1/7 z-20">
         <h3 className="my-0  leading-6 text-white text-xl md:text-2xl font-bold text-shadow-md text-shadow-black-500">

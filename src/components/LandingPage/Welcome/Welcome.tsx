@@ -19,7 +19,8 @@ export const Welcome = () => {
             duration: 2,
             scrollTrigger: {
               trigger: "#welcome",
-              start: isMobile ? "top-=300" : "top-=400",
+              //markers: true,
+              start: isMobile ? "top-=800" : "top-=350",
               end: isMobile ? "bottom-=500" : "top",
               scrub: 0,
               pin: false,

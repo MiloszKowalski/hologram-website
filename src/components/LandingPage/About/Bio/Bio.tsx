@@ -21,7 +21,7 @@ export const Bio = ({ imgSrc, name, description, left }: BioProps) => {
       linesClass: "bio-line",
       onSplit: (self) => {
         return gsap.from(self.lines, {
-          y: -4,
+          y: 100,
           opacity: 0,
           stagger: 0.05,
 
@@ -29,7 +29,7 @@ export const Bio = ({ imgSrc, name, description, left }: BioProps) => {
           scrollTrigger: {
             trigger: `#bio-${nameWithoutSpaces}`,
             start: isMobile ? "top-=400" : "top-=400",
-            end: isMobile ? "bottom-=650" : "bottom-150vh",
+            end: isMobile ? "bottom-=600" : "bottom-150vh",
             scrub: 0,
             //markers: true,
             pin: false,

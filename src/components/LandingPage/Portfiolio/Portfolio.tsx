@@ -9,11 +9,11 @@ export interface PortfolioProps {
 
 export const Portfolio = ({ projects }: PortfolioProps) => {
   return (
-    <section className="p-4 md:p-0 md:mt-96">
-      <h2 className="text-white text-2xl font-bold text-center relative -top-8 md:-top-64">
+    <section className="p-4 md:p-0 -mt-8 md:mt-96">
+      <h2 className="text-white text-2xl font-bold text-center relative -top-12 md:-top-64">
         NASZE PROJEKTY
       </h2>
-      <div className="flex flex-col gap-16 max-w-7xl mx-auto">
+      <div className="flex flex-col gap-20 md:gap-16 max-w-7xl mx-auto">
         {projects.map((project, index) => {
           if (index % 3 === 0) {
             return (
