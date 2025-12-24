@@ -1,0 +1,13 @@
+---
+interface Props {
+  src: string;
+  padding?: string;
+}
+
+const { padding, src } = Astro.props
+
+---
+
+<div class={`py-8 mt-2 h-32 mx-6 flex items-center `}>
+  <img class={padding ?? "h-full"} src={src} alt="" loading="lazy" />
+</div>

@@ -1,0 +1,97 @@
+---
+import { getImage, Image } from "astro:assets";
+import type { Project } from "../../../../types/portfolio";
+import ThumbBg1Raw from "../../../../assets/thumb_bg_1.png"
+import { projects } from "../projects";
+
+import PinkSpotlight from "../../../../assets/pink_spotlight.png";
+
+
+const ThumbBg1 = await getImage( {src: ThumbBg1Raw, format: "avif"} )
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+
+const imported = import.meta.glob<{ default: ImageMetadata }>(
+  "/src/assets/projects/**/miniatura.{jpeg,jpg,png,gif}"
+);
+
+const getOptimizedThumbnail = async () => {
+  for (const [path, imagePromise] of Object.entries(imported)) {
+    if (!path.includes(project.thumbSrc)) {
+      continue;
+    }
+    
+    const importedImage = await imagePromise();
+    const image = importedImage.default;
+    return await getImage({ src: image, format: "avif", width: 577 });
+  }
+
+  return null;
+}
+
+const optimizedThumbnail = (await getOptimizedThumbnail())!
+
+const id = `card-b-${project.name.replace(" ", "")}`;
+---
+<script>
+import { isModalOpen, modalContents } from "../../store/animationStore";
+
+  class CardB extends HTMLElement {
+    connectedCallback() {
+      this.addEventListener("click", () => {
+        modalContents.set(JSON.parse(this.dataset.project!));
+        isModalOpen.set(true);
+      });
+    }
+  }
+
+  customElements.define("card-b", CardB);
+</script>
+<card-b id={id} data-project={JSON.stringify(project)} class="relative z-0">
+  {
+      (projects.findIndex((x) => x.name === project.name) - 10) % 15 === 0 && (
+        <Image
+          src={PinkSpotlight}
+          alt=""
+          class="opacity-25 absolute md:-right-1/2 -right-1/3 -top-5/2 md:-top-5/2 rotate-320 scale-125 md:scale-100 md:-z-1"
+          format="avif"
+          loading="lazy"
+        />
+      )
+    }
+    <article
+      data-speed="0.95"
+      style={{
+        backgroundImage: `url(${ThumbBg1.src})`,
+        backgroundSize: "cover",
+      }}
+      class="p-4 my-4  md:my-0 cursor-pointer group md:ml-auto rounded-2xl w-11/12 mx-auto md:mx-0 md:w-3/7 h-auto relative"
+    >
+    
+      <div class="absolute w-full md:w-full top-[94%] md:top-[97%] left-1/16 md:left-1/7 z-20">
+        <h3 class="my-0  leading-6 text-white text-xl md:text-2xl font-bold text-shadow-md text-shadow-black-500">
+          {project.name}
+        </h3>
+        <h4 class=" text-white text-sm md:text-base text-shadow-md text-shadow-black-500 font-[Chivo_Mono]">
+          {project.clientName}
+        </h4>
+      </div>
+      <div
+        class={`relative w-full h-full bg-no-repeat rounded-xl group-hover:scale-95 transition-transform duration-750 ease-out`}
+      >
+        <img
+          class="block rounded-xl w-full aspect-video"
+          crossorigin="anonymous"
+          src={optimizedThumbnail.src}
+          srcset={optimizedThumbnail.srcSet.attribute}
+          loading="lazy"
+          decoding="async"
+          alt=""
+        />
+      </div>
+    </article>
+</card-b>

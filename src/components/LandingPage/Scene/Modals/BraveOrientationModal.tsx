@@ -18,17 +18,22 @@ export const BraveOrientationModal = () => {
 
   const isMobileBrave = isMobile && "brave" in window.navigator;
 
-  const [isIosModalOpen, setIsIosModalOpen] = useState(false);
+  if (!isMobileBrave || !isIntroFinished.get()) {
+    return null;
+  }
+
+  const [isBraveModalOpen, setIsBraveModalOpen] = useState(false);
 
   useEffect(() => {
     if ($isIntroFinished && isMobileBrave) {
-      setIsIosModalOpen(true);
+      setIsBraveModalOpen(true);
     }
   }, [$isIntroFinished]);
 
   useGSAP(() => {
     const scrollSmoother = ScrollSmoother.get();
-    if (!isIosModalOpen) {
+
+    if (!isBraveModalOpen) {
       scrollSmoother?.paused(false);
       gsap.to(modalRef.current, {
         display: "none",
@@ -48,7 +53,7 @@ export const BraveOrientationModal = () => {
         duration: 0.5,
       });
     }
-  }, [isIosModalOpen]);
+  }, [isBraveModalOpen]);
 
   return (
     <div
@@ -63,7 +68,7 @@ export const BraveOrientationModal = () => {
             className="self-end mb-16 text-3xl mr-8 mt-8 cursor-pointer"
             onClick={() => {
               setTimeout(() => {
-                setIsIosModalOpen(false);
+                setIsBraveModalOpen(false);
               }, 50);
             }}
           >

@@ -1,0 +1,37 @@
+<script>
+  import { isIntroFinished } from "./store/animationStore";
+
+  const hideButton = () => {
+      const skipButtonWrapper = document.getElementById("skip-button-wrapper");
+      skipButtonWrapper?.classList.add("opacity-0", "invisible");
+  }
+
+  isIntroFinished.subscribe((isFinished) => {
+    if (isFinished) {
+      hideButton()
+    }
+  });
+
+  const skipButton = document.getElementById("skip-button");
+
+  skipButton?.addEventListener("click", () => {
+    isIntroFinished.set(true);
+    hideButton()
+  });
+</script>
+<div
+  id="skip-button-wrapper"
+  class="absolute transition-all z-10 duration-300 left-1/2 -translate-x-1/2 bottom-36"
+>
+  <button
+    id="skip-button"
+    class="pl-6 pr-4 py-2
+          font-[Chivo_Mono] text-white text-sm font-bold
+          bg-transparent
+          border-b-2 border-transparent
+          cursor-pointer transition-opacity
+          hover:border-white"
+  >
+    POMIŃ ▶
+  </button>
+</div>

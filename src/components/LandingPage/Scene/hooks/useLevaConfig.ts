@@ -1,9 +1,7 @@
-import { useControls } from "leva";
-
 export const useLevaConfig = (isMobile: boolean) => {
   const baseValues = {
     meshPhysicalMaterial: false,
-    backside: false,
+    backside: true,
     transmissionSampler: false,
     backsideThickness: { value: 1, min: -10, max: 10 },
     resolution: { value: 2048, min: 256, max: 2048, step: 256 },
@@ -31,7 +29,37 @@ export const useLevaConfig = (isMobile: boolean) => {
     samples: { value: 4, min: 0, max: 32, step: 1 },
   };
 
-  const levaConfig = useControls(isMobile ? mobileValues : baseValues);
+  const levaConfig = {
+    meshPhysicalMaterial: false,
+    backside: true,
+    transmissionSampler: false,
+    backsideThickness: 1,
+    resolution: 1024, //2048
+    backsideResolution: 128, //512
+    samples: 4, //6
+    transmission: 1,
+    roughness: 0.2,
+    ior: 1.45,
+    thickness: 0.6,
+    chromaticAberration: 0.3,
+    anisotropy: 0,
+    distortion: 0.01,
+    distortionScale: 0.001,
+    temporalDistortion: 0.2,
+    attenuationDistance: 1,
+    clearcoat: 0,
+    attenuationColor: "#ffffff",
+    color: "#ffffff",
+  };
 
-  return levaConfig;
+  const mobileConfig = {
+    ...levaConfig,
+    resolution: 256,
+    backsideResolution: 32,
+    samples: 2,
+  };
+
+  //const levaConfig = useControls(isMobile ? mobileValues : baseValues);
+
+  return isMobile ? mobileConfig : levaConfig;
 };

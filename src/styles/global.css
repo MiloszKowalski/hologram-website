@@ -5,6 +5,7 @@
   src: url("/fonts/aktiv_grotesk_ex-webfont.woff") format("woff");
   font-weight: normal;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -12,6 +13,7 @@
   src: url("/fonts/aktiv_grotesk_ex_bold-webfont.woff") format("woff");
   font-weight: bold;
   font-style: normal;
+  font-display: swap;
 }
 
 @media not all and (min-resolution: 0.001dpcm) {
@@ -81,18 +83,6 @@ body {
 .ytp-watermark {
   display: none !important;
 }
-
-/* #portfolio:after {
-  animation: grain 7s steps(10) infinite;
-  background-image: url("./grain.svg");
-  content: "";
-  height: 300%;
-  left: -50%;
-  opacity: 0.3;
-  position: absolute;
-  top: -120%;
-  width: 300%;
-} */
 
 .line {
   fill: none;

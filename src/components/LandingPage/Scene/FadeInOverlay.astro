@@ -1,0 +1,17 @@
+<script>
+  import { isLoading } from "../store/animationStore";
+
+  const fadeInOverlay = document.getElementById("fade-in-overlay");
+
+  isLoading.subscribe((isLoading) => {
+    if (!isLoading) {
+      fadeInOverlay?.classList.remove("opacity-100");
+      fadeInOverlay?.classList.add("opacity-0");
+    }
+  });
+</script>
+<div
+  id="fade-in-overlay"
+  class="w-full h-screen transition-opacity duration-1000 opacity-100 bg-black top-0 left-0 z-20 absolute pointer-events-none"
+>
+</div>

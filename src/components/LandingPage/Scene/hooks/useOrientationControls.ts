@@ -1,23 +1,24 @@
-import { useStore } from "@nanostores/react";
 import type { CameraControls } from "@react-three/drei";
 import { useCallback, useRef, type RefObject } from "react";
 import { canRotateUsingPointer } from "../../store/animationStore";
+import throttle from "lodash.throttle";
 
 export const useOrientationControls = (
   cameraRef: RefObject<CameraControls | null>
 ) => {
   const initialGammaRef = useRef<number>(null);
   const initialBetaRef = useRef<number>(null);
-  const $canRotateUsingPointer = useStore(canRotateUsingPointer);
 
   const orientationHandler = useCallback(
-    (event: DeviceOrientationEvent) => {
-      if (
-        !cameraRef.current ||
-        !event.beta ||
-        !event.gamma ||
-        !$canRotateUsingPointer
-      ) {
+    throttle((event: DeviceOrientationEvent) => {
+      if (!canRotateUsingPointer.get()) {
+        initialGammaRef.current = null;
+        initialBetaRef.current = null;
+
+        return;
+      }
+
+      if (!cameraRef.current || !event.beta || !event.gamma) {
         return;
       }
 
@@ -34,8 +35,8 @@ export const useOrientationControls = (
         Math.PI / 2.25 + (event.beta - initialBetaRef.current) / 100,
         true
       );
-    },
-    [$canRotateUsingPointer]
+    }, 50),
+    []
   );
 
   return orientationHandler;

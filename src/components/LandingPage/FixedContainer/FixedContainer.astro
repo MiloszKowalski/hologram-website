@@ -1,0 +1,26 @@
+---
+import PortfolioDetailsModal from "../Portfiolio/Details/PortfolioDetailsModal.astro";
+import FadeInOverlay from "../Scene/FadeInOverlay.astro";
+import { BraveOrientationModal } from "../Scene/Modals/BraveOrientationModal";
+import IOSOrientationModal from "../Scene/Modals/IOSOrientationModal.astro";
+import DesktopMenu from "./Menu/DesktopMenu.astro";
+import MobileMenu from "./Menu/MobileMenu.astro";
+---
+
+<div
+  id="fixed-container"
+  class="w-full h-screen bg-transparent -top-[100px] pointer-events-none border-t-100 border-[rgba(0,0,0,0.75)] left-0 z-50 fixed opacity-100"
+>
+  <div
+    id="nav-bar-container"
+    class="w-full h-28 md:h-28 p-8 from-[rgba(0,0,0,0.75)] to-transparent bg-linear-to-b flex items-center justify-between relative"
+  >
+    <DesktopMenu />
+    <MobileMenu />
+  </div>
+  <PortfolioDetailsModal />
+  <FadeInOverlay />
+
+  <IOSOrientationModal />
+  <BraveOrientationModal client:only />
+</div>

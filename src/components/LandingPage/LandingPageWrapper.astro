@@ -1,0 +1,13 @@
+---
+import LandingPage from "./LandingPage.astro"
+---
+<script>
+
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
+import { gsap } from 'gsap'
+import { useGSAP } from '@gsap/react';
+
+gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollSmoother);
+</script>
+<LandingPage />

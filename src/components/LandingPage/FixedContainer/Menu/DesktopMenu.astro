@@ -1,0 +1,220 @@
+---
+import { getImage } from "astro:assets";
+import LogoRaw from "../../../../assets/logo.png";
+const Logo = await getImage({
+  src: LogoRaw,
+  format: "avif",
+  width: 172,
+  height: 48,
+});
+---
+
+<script>
+  import { isMobile } from "react-device-detect";
+  import {
+    showreelPosition,
+    isMenuVisible,
+    isSceneInView,
+    isMenuExpanded,
+  } from "../../store/animationStore";
+  import ScrollTrigger from "gsap/ScrollTrigger";
+  import ScrollSmoother from "gsap/ScrollSmoother";
+  import { gsap } from "gsap";
+  import throttle from "lodash.throttle"
+
+  const showDesktopNavBar = () => {
+    isMenuVisible.set(!isMobile);
+  };
+
+  const hideDesktopNavBar = () => {
+    isMenuVisible.set(isMobile);
+  };
+
+
+  ScrollTrigger.observe({
+    onChangeY: (observer) => {
+      if (isMenuExpanded.get()) {
+        return
+      }
+
+      const shouldShowNavBar = observer.deltaY < 0
+      if (shouldShowNavBar) {
+        showDesktopNavBar();
+      } else {
+        hideDesktopNavBar();
+      }
+    },
+    lockAxis: true,
+    dragMinimum: 0,
+    tolerance: 0
+  });
+
+  var welcomeOffset = 0
+
+  showreelPosition.subscribe(() => {
+    welcomeOffset = ScrollSmoother.get()?.offset('#welcome', 'top top') ?? 0
+  })
+
+  ScrollTrigger.observe({
+    onChangeY: throttle((observer) => {
+      const isInView = observer.scrollY() < welcomeOffset
+
+      if (isInView === isSceneInView.get()) {
+        return
+      }
+
+      if(isInView) {
+        isSceneInView.set(true)
+      } else {
+        isSceneInView.set(false)
+      }
+
+      const normalizer = ScrollSmoother.get()?.normalizer;
+
+      if (!normalizer || !isMobile) {
+        return;
+      }
+
+      if (isInView) {
+        normalizer.enable();
+      } else {
+        normalizer.disable();
+      }
+    }, 100),
+    lockAxis: true,
+    dragMinimum: 0,
+    tolerance: 0,
+    type: "scroll,touch"
+  });
+
+  const desktopNavBar = document.getElementById("desktopNavBar");
+  desktopNavBar?.addEventListener("pointerenter", showDesktopNavBar);
+
+  const hamburgerAnimation = gsap.fromTo(
+    "#hamburger",
+    { y: -100, opacity: 0 },
+    {
+      y: 0,
+      opacity: 1,
+      ease: "power2.inOut",
+      paused: true,
+    }
+  );
+
+  const navLinksAnimation = gsap.fromTo(
+    ".nav-link",
+    { y: -100, opacity: 0 },
+    {
+      y: 0,
+      opacity: 1,
+      stagger: {
+        from: "start",
+        each: 0.05,
+        grid: [1, 4],
+        ease: "none",
+        axis: "x",
+      },
+      paused: true,
+    }
+  );
+
+  const menuAnimation = isMobile ? hamburgerAnimation : navLinksAnimation;
+
+  const logoAnimation = gsap.fromTo(
+    "#logo",
+    { y: -100, opacity: 0 },
+    {
+      y: 0,
+      opacity: 1,
+      ease: "power2.inOut",
+      paused: true,
+    }
+  );
+
+  const backdropAnimation = gsap.fromTo(
+    "#nav-bar-container",
+    { opacity: 0 },
+    {
+      opacity: 1,
+      ease: "power2.inOut",
+      paused: true,
+    }
+  );
+
+  isMenuVisible.subscribe((isVisible) => {
+    if (isVisible) {
+      backdropAnimation.duration(0.75).play(backdropAnimation.time());
+      logoAnimation.duration(0.75).play(logoAnimation.time());
+      menuAnimation.duration(0.75).play(menuAnimation.time());
+    } else {
+      logoAnimation.duration(0.25).reverse(logoAnimation.time());
+      menuAnimation.duration(0.25).reverse(menuAnimation.time());
+      backdropAnimation.duration(0.25).reverse(backdropAnimation.time());
+    }
+  });
+
+  const desktopGoTo = (selector: string | number, position?: string) => {
+    const scrollSmoother = ScrollSmoother.get();
+    
+    scrollSmoother?.paused(false);
+    
+    if (isSceneInView.get()) {
+      scrollSmoother?.refresh(true);
+    }
+    
+    scrollSmoother?.scrollTo(selector, true, position);
+  };
+
+  document.getElementById("showreel-button")!.onclick = () =>
+    desktopGoTo(showreelPosition.get());
+  document.getElementById("portfolio-button")!.onclick = () =>
+    desktopGoTo("#welcome", "65% center");
+  document.getElementById("about-button")!.onclick = () =>
+    desktopGoTo("#about", "top top");
+  document.getElementById("contact-button")!.onclick = () =>
+    desktopGoTo("#contact", "65% center");
+</script>
+<div
+  id="desktopNavBar"
+  class="pointer-events-auto flex w-full items-center justify-between md:h-28 p-0 md:p-8 md:px-16"
+>
+  <img
+    id="logo"
+    src={Logo.src}
+    srcset={Logo.srcSet.attribute}
+    fetchpriority="high"
+    alt=""
+    width="172px"
+    height="48px"
+    class="h-[48px] w-[172px] opacity-0 z-20"
+  />
+  <nav
+    class="text-white hidden font-semibold pointer-events-auto text-xs gap-20 tracking-[0.5em] items-center uppercase md:flex"
+  >
+    <a
+      id="showreel-button"
+      class="nav-link opacity-0 cursor-pointer hover:text-pink-300 transition-colors"
+    >
+      showreel
+    </a>
+    <a
+      id="portfolio-button"
+      class="nav-link opacity-0 cursor-pointer hover:text-pink-300 transition-colors"
+    >
+      portfolio
+    </a>
+    <a
+      id="about-button"
+      onclick=""
+      class="nav-link opacity-0 cursor-pointer hover:text-pink-300 transition-colors"
+    >
+      o nas
+    </a>
+    <a
+      id="contact-button"
+      class="nav-link opacity-0 cursor-pointer hover:text-pink-300 transition-colors"
+    >
+      kontakt
+    </a>
+  </nav>
+</div>

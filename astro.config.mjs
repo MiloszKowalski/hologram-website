@@ -27,7 +27,12 @@ export default defineConfig({
         },
       }),
     ],
+    server: {
+      allowedHosts: [".share.zrok.io"],
+    },
+    preview: {
+      allowedHosts: ["3lr587gcsin9.share.zrok.io"],
+    },
   },
-
   integrations: [react()],
 });

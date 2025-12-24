@@ -1,20 +1,27 @@
 ---
 import "../styles/global.css";
+
+const description =
+`Witaj w Studio Hologram. Jesteśmy warszawskim domem produkcyjnym, w którym każdy film nabiera życia.
+Od 6 lat łączymy ludzi i ich historie, które zostawiają ślad.
+Rozgość się i zobacz nasze rzeczy.`
+
+
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="pl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>Studio Hologram</title>
+    <meta name="description" content={description} />
     <meta property="og:title" content="Studio Hologram" />
     <meta
       property="og:description"
-      content="Witaj w Studio Hologram. Jesteśmy warszawskim domem produkcyjnym, w którym każdy film nabiera życia.
-          Od 6 lat łączymy ludzi i ich historie, które zostawiają ślad. Rozgość się i zobacz nasze rzeczy."
+      content={description}
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://studiohologram.pl" />
@@ -24,7 +31,9 @@ import "../styles/global.css";
     <link
       href="https://fonts.googleapis.com/css2?family=Chivo+Mono:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
+      fetchpriority="low"
     />
+    <!-- <ClientRouter /> -->
   </head>
   <body>
     <slot />

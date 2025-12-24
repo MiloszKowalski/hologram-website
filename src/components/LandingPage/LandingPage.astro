@@ -1,0 +1,119 @@
+---
+import About from "./About/About.astro";
+import Contact from "./Contact/Contact.astro";
+import Portfolio from "./Portfiolio/Portfolio.astro";
+import { projects } from "./Portfiolio/projects";
+import TrustedBy from "./TrustedBy/TrustedBy.astro";
+import Welcome from "./Welcome/Welcome.astro";
+// import { Leva } from "leva";
+import { ThreeCanvas } from "./Scene/ThreeCanvas";
+import FixedContainer from "./FixedContainer/FixedContainer.astro";
+import SkipButton from "./SkipButton.astro";
+import { getImage } from "astro:assets";
+import GrainRaw from "../../assets/grain.png";
+import { Image } from "astro:assets";
+import BlueGradient from "../../assets/blue_gradient.png"
+// import BackgroundImageRaw from "../../assets/image.png"
+const backgroundImage = await getImage({
+  src: GrainRaw,
+  quality: "low",
+  format: "jpg",
+  widths: [3860, 2560, 1080, 720, 640, 480],
+  fit: "cover",
+});
+---
+
+<script>
+  import { useGLTF } from "@react-three/drei";
+  import { ScrollSmoother } from "gsap/ScrollSmoother";
+import { isMobile } from "react-device-detect";
+
+  //import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  //const userAgent = window.navigator.userAgent;
+  //const isIOS = !!userAgent.match(/iPad/i) || !!userAgent.match(/iPhone/i);
+  //const isWebkit = !!userAgent.match(/WebKit/i);
+
+    ScrollSmoother.create({
+    smooth: 0.8, // how long (in seconds) it takes to "catch up" to the native scroll position
+    effects: !isMobile, // looks for data-speed and data-lag attributes on elements
+    smoothTouch: false, // much shorter smoothing time on touch devices (default is NO smoothing on touch devices)
+    normalizeScroll: true,
+  });
+  
+
+  ScrollSmoother.get()!.scrollTo(0, false);
+
+  ScrollSmoother.get()!.paused(true);
+
+  // document.onclick = () => {
+  //   if (!document.fullscreenElement) {
+  //     // If the document is not in full screen mode
+  //     // make the video full screen
+  //     document.documentElement
+  //       .requestFullscreen({ navigationUI: "hide" })
+  //       .then(() => {
+  //         observer?.kill();
+  //         observer = ScrollTrigger.normalizeScroll(true);
+  //         screen.orientation
+  //           //@ts-ignore
+  //           .lock("portrait")
+  //           .then(() => {
+  //             observer?.kill();
+  //             observer = ScrollTrigger.normalizeScroll(true);
+  //           })
+  //           .catch((error) => {});
+  //       })
+  //       .catch((error) => {
+  //       });
+  //   } else {
+  //     document.exitFullscreen();
+  //     ScrollTrigger.normalizeScroll(true);
+  //   }
+  // };
+
+  useGLTF.preload("../models/hologram.glb");
+</script>
+
+<div>
+  <FixedContainer />
+  <div
+    id="smooth-wrapper"
+    class="bg-[#01010B]"
+  >
+    <img
+      
+      srcset={backgroundImage.srcSet.attribute}
+      alt=""
+      style={{ position: "fixed", minHeight: "100vh", minWidth: "100vw", objectFit: "cover", opacity: 0.35}}
+      {...backgroundImage.attributes}
+
+    />
+    <div id="smooth-content">
+      <div class="h-screen" id="hero">
+        <!-- <Leva client:load hidden /> -->
+        <SkipButton />
+        <ThreeCanvas client:only />
+      </div>
+
+      <div style={{ position: "relative" }}>
+        <div
+          id="sections-wrapper"
+          class={`w-full relative overflow-hidden`}
+          style={{
+            marginTop: 0,
+            borderRadius: "25px 25px 0 0",
+            boxShadow: "0px -15px 50px 10px #080a13",
+          }}
+        >
+          <Image src={BlueGradient} alt="" class="absolute opacity-35 md:-z-1 w-full"  format="avif" loading="lazy" />
+          <Welcome />
+          <Portfolio projects={projects} />
+          <TrustedBy />
+          <About />
+          <Contact />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

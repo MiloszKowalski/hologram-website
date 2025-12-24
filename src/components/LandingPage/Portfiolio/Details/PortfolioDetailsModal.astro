@@ -1,0 +1,165 @@
+---
+import { ProjectInfo } from "./ProjectInfo";
+import { SeeTheWholeThingButton } from "./SeeTheWholeThingButton";
+import { StillsGrid } from "./StillsGrid";
+import { getImage } from "astro:assets";
+import type { GetImageResult } from "astro";
+
+const imported = import.meta.glob<{ default: ImageMetadata }>(
+  "/src/assets/projects/**/*.{jpeg,jpg,png,gif}"
+);
+
+const imageData: [[string, GetImageResult]?] = [];
+
+for (const [path, imagePromise] of Object.entries(imported)) {
+  if (path.includes("miniatura")) {
+    continue;
+  }
+
+  const importedImage = await imagePromise();
+  const image = importedImage.default;
+  const optimizedImage = await getImage({
+    src: image,
+    format: "avif",
+    width: 402,
+  });
+
+  imageData.push([path, optimizedImage]);
+}
+---
+
+<script>
+  import {
+    isIntroFinished,
+    isMenuVisible,
+    isModalOpen,
+    modalContents,
+  } from "../../store/animationStore";
+  import gsap from "gsap";
+  import ScrollSmoother from "gsap/ScrollSmoother";
+import { isMobile } from "react-device-detect";
+
+  const backdrop = document.getElementById("portfolio-details-modal-backdrop");
+  const modal = document.getElementById("portfolio-details-modal");
+  const scrollSmoother = ScrollSmoother.get();
+
+  const backdropTween = gsap
+    .fromTo(
+      backdrop,
+      {
+        display: "none",
+        opacity: 0,
+        filter: isMobile ? "none" : "blur(10px)",
+        duration: 0.5,
+      },
+      {
+        display: "block",
+        opacity: 1,
+        filter: isMobile ? "none" : "blur(0px)",
+        duration: 0.5,
+      }
+    )
+    .pause();
+
+  const modalTween = gsap
+    .fromTo(
+      modal,
+      {
+        display: "none",
+        opacity: 0,
+        filter: "blur(10px)",
+        scale: 0.9,
+        duration: 0.5,
+      },
+      {
+        display: "flex",
+        opacity: 1,
+        filter: "blur(0px)",
+        scale: 1,
+        duration: 0.5,
+      }
+    )
+    .pause();
+
+  const stills = document.getElementById("portfolio-details-modal-stills");
+
+  isModalOpen.listen((isOpen) => {
+    if (!isIntroFinished.get()) {
+      return;
+    }
+
+    if (isOpen) {
+      backdropTween.play(0);
+      modalTween.play(0);
+      isMenuVisible.set(false);
+      stills?.scrollTo(0, 0);
+      scrollSmoother?.paused(true);
+    } else {
+      backdropTween.reverse();
+      modalTween.reverse();
+      scrollSmoother?.paused(false);
+      scrollSmoother?.normalizer?.disable()
+    }
+  });
+
+  const closeModal = (_e: MouseEvent) => {
+    isModalOpen.set(false);
+    setTimeout(() => modalContents.set(null), 400);
+  };
+
+  document
+    .getElementById("portfolio-details-modal-backdrop")
+    ?.addEventListener("click", closeModal, {
+      capture: true,
+    });
+
+  document
+    .getElementById("portfolio-details-modal-close-button")
+    ?.addEventListener("click", closeModal);
+</script>
+
+<div class="relative">
+  <div
+    id="portfolio-details-modal-backdrop"
+    class="hidden opacity-0 pointer-events-auto -mt-28 md:-mt-28 w-screen relative h-screen bg-[rgba(0,0,0,0.58)] backdrop-blur-xs"
+  >
+  </div>
+  <div
+    data-images={JSON.stringify(imageData)}
+    id="portfolio-details-modal"
+    class="hidden pointer-events-none md:overflow-hidden opacity-0 z-[9999] text-white absolute top-1/2 -translate-x-1/2 left-1/2 -translate-y-1/2 w-full h-screen md:w-7/8 p-[2px] md:h-[95vh] md:max-w-[860px] md:rounded-2xl flex-col bg-gradient-to-br from-[#2C67FF] to-[#2C67FF88] mx-auto"
+  >
+    <button
+      id="portfolio-details-modal-close-button"
+      class="absolute pointer-events-auto font-bold right-0 top-0 mb-16 text-3xl mr-8 mt-8 cursor-pointer hover:scale-120 transition-transform"
+    >
+      X
+    </button>
+    <div
+      id="portfolio-details-modal-stills"
+      class="overflow-auto [&::-webkit-scrollbar]:w-1
+            [&::-webkit-scrollbar-thumb]:via-[#214bb8]
+              [&::-webkit-scrollbar-thumb]:via-50%
+              [&::-webkit-scrollbar-thumb]:bg-gradient-to-b
+              [&::-webkit-scrollbar-thumb]:[#5a5a5a46]
+              [&::-webkit-scrollbar-thumb]:rounded-2xl
+              [&::-webkit-scrollbar-track]:rounded-2xl
+              [&::-webkit-scrollbar-track]:border-t-8
+              [&::-webkit-scrollbar-track]:border-t-[#2250c3]
+              [&::-webkit-scrollbar-track]:border-b-8
+              [&::-webkit-scrollbar-track]:border-b-[#163074]
+              [&::-webkit-scrollbar-track]:bg-gradient-to-b
+            [&::-webkit-scrollbar-track]:from-[#072879]
+            [&::-webkit-scrollbar-track]:to-[#021544] pointer-events-auto w-full h-full md:max-w-[1280px] flex flex-col bg-[#0f0f0fae] md:rounded-[calc(1rem-2px)]"
+    >
+      <div class="mt-8 md:mt-10 grid md:grid-cols-11 md:px-8">
+        <ProjectInfo client:only />
+        <SeeTheWholeThingButton client:only />
+      </div>
+      <StillsGrid
+        client:only
+        imageData={imageData}
+      />
+    </div>
+  </div>
+</div>

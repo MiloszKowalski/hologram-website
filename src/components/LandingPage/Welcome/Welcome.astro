@@ -1,0 +1,59 @@
+---
+import Icon from "../../../assets/hologram_multicolor.svg?react";
+---
+
+<script>
+  import { isMobile } from "react-device-detect";
+  import SplitText from "gsap/SplitText";
+  import gsap from "gsap";
+  import { isSceneInView } from "../store/animationStore";
+
+  setTimeout(() => {
+    SplitText.create("#welcome-text", {
+      type: "lines",
+      autoSplit: true,
+      aria: "none",
+      mask: "lines",
+      onSplit: (self) => {
+        return gsap.from(self.lines, {
+          y: 100,
+          opacity: 0,
+          stagger: 0.05,
+          duration: 2,
+          scrollTrigger: {
+            trigger: "#welcome",
+            //markers: true,
+            start: isMobile ? "top bottom" : "top-=350",
+            end: isMobile ? "bottom center" : "top",
+            scrub: isMobile ? 0.5 : 1.25,
+            pin: false,
+          },
+        });
+      },
+    });
+  }, 250);
+</script>
+
+<article
+  id="welcome"
+  class="flex flex-col w-full p-6 md:w-[70ch] gap-8 md:mx-auto pt-36 md:py-[50vh] md:translate-x-20 relative mb-48 md:mb-96 h-[60vh]"
+>
+  <Icon
+    className="absolute top-2/5 left-1/2 md:top-3/8 md:translate-y-[10%] md:-left-28 w-48 md:w-48 opacity-30 md:opacity-40"
+  />
+  <div id="welcome-text">
+    <h1 class="text-white text-xl mb-8 font-extrabold">
+      Witaj w Studio Hologram.
+    </h1>
+    <p class="text-white text-sm leading-6 font-[Chivo_Mono]">
+      Jesteśmy warszawskim domem produkcyjnym, w którym każdy film nabiera
+      życia.
+      <br />
+      Od 6 lat łączymy ludzi i ich historie, które zostawiają ślad.
+    </p>
+    <p class="text-white text-sm font-[Chivo_Mono]">
+      <br />
+      Rozgość się i zobacz nasze rzeczy.
+    </p>
+  </div>
+</article>

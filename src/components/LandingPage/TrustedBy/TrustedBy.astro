@@ -1,0 +1,90 @@
+---
+import { getImage, Image } from "astro:assets";
+import EmblaCarousel from "./Carousel/EmblaCarousel.astro";
+
+import AsusTekLogoRaw from "../../../assets/clients/AsusTek-black-logo.png";
+const AsusTekLogo = await getImage({ src: AsusTekLogoRaw, format: "png", width: 135 });
+
+import BailaEllaRaw from "../../../assets/clients/baila_ella.png";
+const BailaElla = await getImage({ src: BailaEllaRaw, format: "png", width: 156 });
+
+import TwentyTwentyRaw from "../../../assets/clients/2020.png";
+const TwentyTwenty = await getImage({ src: TwentyTwentyRaw, format: "png", width: 64 });
+
+import ContinentalRaw from "../../../assets/clients/Continental-logo-logotype.png";
+const Continental = await getImage({ src: ContinentalRaw, format: "png", width: 204 });
+
+import InfaktRaw from "../../../assets/clients/infakt-logo.png";
+const Infakt = await getImage({ src: InfaktRaw, format: "png", width: 123 });
+
+import KayaxRaw from "../../../assets/clients/kayax.png";
+const Kayax = await getImage({ src: KayaxRaw, format: "png", width: 128 });
+
+import MowiRaw from "../../../assets/clients/Mowi_ASA_logo.png";
+const Mowi = await getImage({ src: MowiRaw, format: "png", width: 138 });
+
+import NetflixRaw from "../../../assets/clients/netflix.png";
+const Netflix = await getImage({ src: NetflixRaw, format: "png", width: 148 });
+
+import MicrosoftRaw from "../../../assets/clients/microsoft.png";
+const Microsoft = await getImage({ src: MicrosoftRaw, format: "png", width: 173 });
+
+import PolsatRaw from "../../../assets/clients/Polsat_2021_gradient.png";
+const Polsat = await getImage({ src: PolsatRaw, format: "png", width: 47 });
+
+import SonyMusicRaw from "../../../assets/clients/sony music.png";
+const SonyMusic = await getImage({ src: SonyMusicRaw, format: "png", width: 186 });
+
+import TvnWbRaw from "../../../assets/clients/TVN WB.png";
+const TvnWb = await getImage({ src: TvnWbRaw, format: "png", width: 145 });
+
+import WarnerRaw from "../../../assets/clients/warner.png";
+const Warner = await getImage({ src: WarnerRaw, format: "png", width: 138 });
+
+import XKomRaw from "../../../assets/clients/x-kom_the_seller_logo-2048x1365.png";
+const XKom = await getImage({ src: XKomRaw, format: "png", width: 122 });
+
+import Ellipse from "../../../assets/pink_ellipse.png";
+---
+<section class="mt-40 md:mt-24 relative">
+  <div class="mx-auto opacity-25 absolute left-1/2 -translate-x-1/2 -top-8/3 md:-top-7/2 md:-z-1 scale-250 md:scale-100">
+    <Image src={Ellipse} alt="" loading="lazy"  />
+  </div>
+  <h2 class="text-3xl mt-0 font-bold text-white text-center">KLIENCI</h2>
+  <EmblaCarousel
+    slides={[
+      { src: AsusTekLogo.src, padding: "h-3/5" },
+      { src: BailaElla.src, padding: "h-4/5" },
+      { src: TwentyTwenty.src },
+      { src: Continental.src, padding: "h-[240%]" },
+      { src: Infakt.src, padding: "h-4/5" },
+      { src: Kayax.src, padding: "h-[200%]" },
+      { src: Mowi.src, padding: "h-1/2" },
+      { src: Netflix.src, padding: "h-5/4" },
+      { src: Microsoft.src },
+      { src: Polsat.src, padding: "h-4/5" },
+      { src: SonyMusic.src, padding: "h-3/5" },
+      { src: TvnWb.src, padding: "h-4/5" },
+      { src: Warner.src, padding: "h-[130%]" },
+      { src: XKom.src, padding: "h-3/5" },
+      { src: AsusTekLogo.src, padding: "h-3/5" },
+      { src: BailaElla.src, padding: "h-4/5" },
+      { src: TwentyTwenty.src },
+      { src: Continental.src, padding: "h-[240%]" },
+      { src: Infakt.src, padding: "h-4/5" },
+      { src: Kayax.src, padding: "h-[200%]" },
+      { src: Mowi.src, padding: "h-1/2" },
+      { src: Netflix.src, padding: "h-5/4" },
+      { src: Microsoft.src },
+      { src: Polsat.src, padding: "h-4/5" },
+      { src: SonyMusic.src, padding: "h-3/5" },
+      { src: TvnWb.src, padding: "h-4/5" },
+      { src: Warner.src, padding: "h-[130%]" },
+      { src: XKom.src, padding: "h-3/5" },
+    ]}
+    options={{
+      loop: true,
+      dragFree: true,
+    }}
+  />
+</section>

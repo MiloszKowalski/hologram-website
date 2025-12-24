@@ -1,0 +1,46 @@
+---
+import type { EmblaOptionsType } from "embla-carousel";
+import Image from "./Image.astro";
+
+interface Props {
+  slides: { src: string; padding?: string }[];
+  options?: EmblaOptionsType;
+}
+
+const { slides } = Astro.props;
+---
+
+<script>
+  import EmblaCarousel, { type EmblaOptionsType } from "embla-carousel";
+  import AutoScroll from "embla-carousel-auto-scroll";
+
+  const plugins = [
+    AutoScroll({
+      playOnInit: true,
+      stopOnInteraction: false,
+      speed: 1.5,
+      stopOnFocusIn: false,
+      stopOnMouseEnter: false,
+      startDelay: 0,
+    }),
+  ];
+
+  const emblaNode = document.querySelector(".embla") as HTMLElement;
+  const options: EmblaOptionsType = { loop: true, direction: "ltr", dragFree: true, container: ".embla__container" };
+  EmblaCarousel(emblaNode, options, plugins);
+</script>
+<section class="embla" dir="ltr">
+  <div class="embla__viewport">
+    <div class="embla__container">
+      {
+        slides.map((el) => (
+          <div class="embla__slide">
+            <div class="embla__slide__number">
+              <Image {...el} />
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

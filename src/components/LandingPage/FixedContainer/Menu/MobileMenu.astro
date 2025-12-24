@@ -1,0 +1,192 @@
+<script>
+  import {
+    canRotateUsingPointer,
+    isIntroFinished,
+    isMenuExpanded,
+    isMenuVisible,
+    isSceneInView,
+    showreelPosition,
+  } from "../../store/animationStore";
+  import gsap from "gsap";
+  import { ScrollSmoother } from "gsap/ScrollSmoother";
+import { isMobile } from "react-device-detect";
+
+
+  const toggleMenu = () => {
+    isMenuExpanded.set(!isMenuExpanded.get());
+
+    const tl = gsap
+      .timeline()
+      .fromTo(
+        "#mobile-menu",
+        {
+          opacity: 0,
+          visibility: "hidden",
+          transform: "translate(-50%, -25%)",
+        },
+        {
+          opacity: 1,
+          visibility: "visible",
+          transform: "translate(-50%, 0%)",
+          duration: 0.5,
+        }
+      )
+      .fromTo(
+        "#mobile-menu-shadow",
+        {
+          opacity: 0,
+          visibility: "hidden",
+          transform: "translate(0, -25%)",
+        },
+        {
+          opacity: 1,
+          visibility: "visible",
+          transform: "translate(0, 0)",
+          duration: 0.5,
+        },
+        "<"
+      )
+      .fromTo(
+        ".mobile-nav-link",
+        { y: -40, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.75,
+          delay: 0.5,
+          stagger: {
+            // wrap advanced options in an object
+            each: 0.05,
+            grid: [4, 1],
+            ease: "power2.inOut",
+          },
+        },
+        "<"
+      )
+      .pause();
+
+    if (isMenuExpanded.get()) {
+      tl.play();
+    } else {
+      tl.duration(0.5);
+      tl.reverse(tl.endTime());
+    }
+  };
+
+  const mobileGoTo = (selector: string | number, position?: string) => {
+    toggleMenu();
+
+    canRotateUsingPointer.set(false);
+
+    if (isSceneInView.get()) {
+      ScrollSmoother.get()?.refresh(true);
+    }
+
+    setTimeout(() => {
+      isMenuVisible.set(false);
+      const target =
+        typeof selector === "string"
+          ? (ScrollSmoother.get()?.offset(selector, position) ?? 0)
+          : selector;
+
+      const curr = { x: ScrollSmoother.get()?.scrollTop() ?? 0 };
+
+      const time = Math.abs(target - curr.x) / 5000;
+
+      gsap.to(curr, {
+        x: target,
+        onUpdate: () => {
+          ScrollSmoother.get()?.scrollTop(curr.x);
+        },
+        duration: time,
+      });
+    }, 500);
+  };
+
+  isMenuExpanded.subscribe((isExpanded) => {
+    if (!isMobile || !isIntroFinished.get()) {
+      return
+    }
+
+    const hamburger = document.getElementById("hamburger");
+    const shadow = document.getElementById("mobile-menu-shadow");
+
+    if (isExpanded) {
+      ScrollSmoother.get()?.paused(true)
+      hamburger?.classList.add("opened");
+      shadow?.classList.add("pointer-events-auto");
+    } else {
+      ScrollSmoother.get()?.paused(false)
+      hamburger?.classList.remove("opened");
+      shadow?.classList.remove("pointer-events-auto");
+    }
+  });
+
+  document.getElementById("hamburger")!.onclick = toggleMenu;
+  
+  document.getElementById("hamburger")!.onclick = toggleMenu;
+
+  document.getElementById("mobile-showreel-button")!.onclick = () =>
+    mobileGoTo(showreelPosition.get());
+  document.getElementById("mobile-portfolio-button")!.onclick = () =>
+    mobileGoTo("#welcome");
+  document.getElementById("mobile-about-button")!.onclick = () =>
+    mobileGoTo("#about", "top top-=100");
+  document.getElementById("mobile-contact-button")!.onclick = () =>
+    mobileGoTo("#contact");
+</script>
+
+<button
+  id="hamburger"
+  class="menu md:hidden pointer-events-auto opacity-0 z-20"
+>
+  <svg width="36" height="36" viewBox="0 0 100 100">
+    <path
+      class="line line1"
+      d="M 20,29.000046 H 80.000231 C 80.000231,29.000046 94.498839,28.817352 94.532987,66.711331 94.543142,77.980673 90.966081,81.670246 85.259173,81.668997 79.552261,81.667751 75.000211,74.999942 75.000211,74.999942 L 25.000021,25.000058"
+    ></path>
+    <path class="line line2" d="M 20,50 H 80"></path>
+    <path
+      class="line line3"
+      d="M 20,70.999954 H 80.000231 C 80.000231,70.999954 94.498839,71.182648 94.532987,33.288669 94.543142,22.019327 90.966081,18.329754 85.259173,18.331003 79.552261,18.332249 75.000211,25.000058 75.000211,25.000058 L 25.000021,74.999942"
+    ></path>
+  </svg>
+</button>
+<div
+  id="mobile-menu-shadow"
+  class="absolute md:hidden opacity-0 z-10 w-[120vw] h-[120vh] top-[0%] left-[-10vw] from-50% bg-linear-to-b from-[rgba(0,0,0,0.75)] to-transparent blur-xl backdrop-blur-xl"
+>
+</div>
+<div
+  id="mobile-menu"
+  class={"absolute md:hidden h-screen opacity-0 invisible left-[50%] top-0 translate-x-[-50%] z-10"}
+>
+  <nav
+    class="text-white md:hidden font-semibold pointer-events-auto text-l tracking-[0.5em] h-[50vh] my-[25vh] justify-between *:uppercase flex flex-col items-center"
+  >
+    <button
+      id="mobile-showreel-button"
+      class="mobile-nav-link -translate-y-[40px] opacity-0"
+    >
+      showreel
+    </button>
+    <button
+      id="mobile-portfolio-button"
+      class="mobile-nav-link -translate-y-[40px] opacity-0"
+    >
+      portfolio
+    </button>
+    <button
+      id="mobile-about-button"
+      class="mobile-nav-link -translate-y-[40px] opacity-0"
+    >
+      o nas
+    </button>
+    <button
+      id="mobile-contact-button"
+      class="mobile-nav-link -translate-y-[40px] opacity-0"
+    >
+      kontakt
+    </button>
+  </nav>
+</div>

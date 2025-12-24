@@ -1,238 +1,230 @@
 import { useGSAP } from "@gsap/react";
 import {
-  AdaptiveDpr,
-  BakeShadows,
   CameraControls,
   MeshTransmissionMaterial,
   SpotLight,
-  useFBO,
+  useDetectGPU,
   useGLTF,
   usePerformanceMonitor,
   useTexture,
   useVideoTexture,
   type PerformanceMonitorApi,
 } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import {
   Bloom,
   DepthOfField,
-  EffectComposer,
+  EffectComposer as EffectComposerComp,
   Noise,
   Vignette,
 } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Vector2, Vector3, type Group, type Object3DEventMap } from "three";
+import { useCallback, useEffect, useRef, useMemo } from "react";
+import { Group, type Object3DEventMap, type Mesh } from "three";
 import gsap from "gsap";
 import { useNoScrollOnLoad } from "./hooks/useNoScrollOnLoad";
 import { useWallLights } from "./hooks/useWallLights";
 import { isMobile } from "react-device-detect";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useStore } from "@nanostores/react";
 import {
   isIntroFinished,
   canRotateUsingPointer,
   isMenuVisible,
   showreelPosition,
+  isLoading,
+  currentDpr,
 } from "../store/animationStore";
 import { useLevaConfig } from "./hooks/useLevaConfig";
 import { useOrientationControls } from "./hooks/useOrientationControls";
+import ScrollSmoother from "gsap/ScrollSmoother";
+import ScrollTrigger from "gsap/ScrollTrigger";
+import throttle from "lodash.throttle";
 
-export default function Scene() {
-  const { scene, meshes } = useGLTF("../models/hologram.glb");
+interface SceneProps {
+  gltf: ReturnType<typeof useGLTF<string>>;
+  inView: boolean;
+}
+
+export default function Scene({ gltf, inView }: SceneProps) {
+  const { scene, meshes } = useMemo(() => gltf, [gltf]);
   useWallLights(scene);
   useNoScrollOnLoad();
 
-  const crystalRef = useRef(scene);
+  const crystalRef = useRef<Mesh>(null);
   const logoRef = useRef<Group<Object3DEventMap> | null>(null);
-  const previousPointerRef = useRef<Vector3>(new Vector3());
-  const menuTimeoutRef = useRef<NodeJS.Timeout>(null);
   const introAnimationRef = useRef<gsap.core.Tween>(null);
 
   const $isIntroFinished = useStore(isIntroFinished);
-  const $isMenuVisible = useStore(isMenuVisible);
   const $canRotateUsingPointer = useStore(canRotateUsingPointer);
 
-  const [isDofEnabled, setIsDofEnabled] = useState(!isMobile);
+  const isDofEnabled = !isMobile;
 
   const timelineRef = useRef<gsap.core.Timeline>(null);
-  const introCameraRotationRef = useRef({ x: -Math.PI / 2 });
-  const screen = useRef(meshes["Spotlight_target_screen"]);
-  const [cameraDolly, setCameraDolly] = useState({
+  const introCameraRotationRef = useRef({ x: -Math.PI / 2, y: 0 });
+
+  const initialDolly = {
     z: -5,
     y: 3,
     targetZ: -20,
     targetY: 0,
-    focalLength: 0.15,
-  });
+  };
+
+  const cameraDollyRef = useRef({ ...initialDolly });
 
   const levaConfig = useLevaConfig(isMobile);
 
-  const [config, setConfig] = useState({
-    ...levaConfig,
-  });
+  const config = levaConfig;
 
   const cameraRef = useRef<CameraControls>(null);
   const orientation = useOrientationControls(cameraRef);
 
-  useEffect(() => {
+  useGSAP(() => {
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener("deviceorientation", orientation, false);
+    } else {
+      console.log("DeviceOrientationEvent is not supported");
+    }
+
+    return () => {
+      if (window.DeviceOrientationEvent) {
+        window.removeEventListener("deviceorientation", orientation, false);
+      }
+    };
+  }, []);
+
+  const welcomeScrollPositionRef = useRef(0);
+
+  useGSAP(() => {
     if (cameraRef.current && introCameraRotationRef.current) {
-      introAnimationRef.current ??= gsap
-        .to(introCameraRotationRef.current, {
-          x: 0,
-          duration: 2,
-          onComplete: () => {
-            isIntroFinished.set(true);
-            isMenuVisible.set(true);
-          },
-          ease: "power2.inOut",
-          delay: 1,
-        })
-        .pause(0);
+      introAnimationRef.current ??= gsap.to(introCameraRotationRef.current, {
+        x: 0,
+        y: 2,
+        duration: 2,
+        onComplete: () => {
+          isIntroFinished.set(true);
+          isMenuVisible.set(true);
+          canRotateUsingPointer.set(true);
+
+          cameraRef.current!.elevate(2, true);
+
+          welcomeScrollPositionRef.current =
+            ScrollSmoother.get()?.offset("#welcome") ?? 0;
+        },
+        ease: "power2.inOut",
+        delay: 1,
+        paused: true,
+      });
 
       if ($isIntroFinished) {
-        introAnimationRef.current.pause(introAnimationRef.current.endTime());
+        introAnimationRef.current.timeScale(3);
       } else {
+        isLoading.set(false);
+        introAnimationRef.current.timeScale(1);
         introAnimationRef.current.restart(true);
       }
     }
   }, [$isIntroFinished]);
 
-  useGSAP(() => {
-    if ($isMenuVisible) {
-      gsap.fromTo(
-        "#logo",
-        { y: -100, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.75,
-          ease: "power2.inOut",
+  const onTlUpdate: ScrollTrigger.Callback = useCallback(
+    throttle((s: ScrollTrigger) => {
+      if (!isIntroFinished.get()) {
+        return;
+      }
+
+      if (s.progress <= 0.1) {
+        if (!canRotateUsingPointer.get()) {
+          canRotateUsingPointer.set(true);
         }
-      );
-
-      if (isMobile) {
-        gsap.fromTo(
-          "#hamburger",
-          { y: -100, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            delay: 0,
-            duration: 0.75,
-            ease: "power2.inOut",
-          }
-        );
       } else {
-        gsap.fromTo(
-          ".nav-link",
-          { y: -100, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.5,
-            delay: 0.0,
-            stagger: {
-              // wrap advanced options in an object
-              each: 0.05,
-              grid: "auto",
-              ease: "power2.inOut",
-            },
-          }
-        );
+        if (canRotateUsingPointer.get()) {
+          canRotateUsingPointer.set(false);
+        }
       }
-    } else {
-      gsap.fromTo(
-        "#logo",
-        {
-          y: 0,
-          opacity: 1,
-        },
-        { y: -100, opacity: 0, duration: 0.25, ease: "power2.inOut" }
-      );
 
-      if (isMobile) {
-        gsap.fromTo(
-          "#hamburger",
-          {
-            y: 0,
-            opacity: 1,
-            delay: 0,
-          },
-          { y: -100, opacity: 0, duration: 0.25, ease: "power2.inOut" }
-        );
-      } else {
-        gsap.fromTo(
-          ".nav-link",
-          {
-            y: 0,
-            opacity: 1,
-          },
-          {
-            y: -100,
-            opacity: 0,
-            duration: 0.25,
-          }
-        );
-      }
-    }
-  }, [$isMenuVisible]);
+      cameraRef.current?.setLookAt(
+        0,
+        cameraDollyRef.current.y,
+        cameraDollyRef.current.z,
+        0,
+        cameraDollyRef.current.targetY,
+        cameraDollyRef.current.targetZ,
+        true
+      );
+    }, 100),
+    []
+  );
 
   useGSAP(() => {
-    if (document.documentElement && $isIntroFinished) {
-      document.documentElement.style.overflowY = "auto";
-
-      timelineRef.current = gsap.timeline({
+    ScrollSmoother.get()?.scrollTo(0, false);
+    timelineRef.current = gsap
+      .timeline({
         invalidateOnRefresh: true,
         // yes, we can add it to an entire timeline!
         scrollTrigger: {
           invalidateOnRefresh: true,
-          trigger: "#smooth-wrapper",
+          trigger: "#hero",
           pin: "#hero", // pin the trigger element while active
           start: "top top", // when the top of the trigger hits the top of the viewport
-          end: "+=3500px", // end after scrolling 500px beyond the start
-          onEnter: () => {
-            window.scrollTo(0, 0);
-            canRotateUsingPointer.set(true);
-          },
+          end: "+=2500px", // end after scrolling 500px beyond the start
           //markers: true,
           scrub: 0, // smooth scrubbing, takes 1 second to "catch up" to the scrollbar
           snap: {
             snapTo: "labelsDirectional", // snap to the closest label in the timeline
-            inertia: true,
-            duration: { min: 0.01, max: 0.75 }, // the snap animation should be at least 0.2 seconds, but no more than 3 seconds (determined by velocity)
+            inertia: false,
+            duration: { min: 0.01, max: 0.3 }, // the snap animation should be at least 0.2 seconds, but no more than 3 seconds (determined by velocity)
             delay: 0, // wait 0.2 seconds from the last scroll event before doing the snapping
             ease: "linear", // the ease of the snap animation ("power3" by default)
           },
-          onUpdate: (s) => {
-            cameraRef.current?.setLookAt(
-              0,
-              cameraDolly.y,
-              cameraDolly.z,
-              0,
-              cameraDolly.targetY,
-              cameraDolly.targetZ,
-              true
-            );
-          },
+          onUpdate: onTlUpdate,
         },
-      });
+      })
+      .clear(true)
+      .progress(0);
+  }, []);
+
+  useGSAP(() => {
+    if (inView) {
+      timelineRef.current?.pause();
+    } else {
+      timelineRef.current?.resume();
+    }
+  }, [inView]);
+
+  const pointerTimeoutRef = useRef<NodeJS.Timeout>(null);
+
+  useGSAP(() => {
+    if ($isIntroFinished) {
+      ScrollSmoother.get()!.paused(false);
+
+      if (!timelineRef.current || !crystalRef.current) {
+        return;
+      }
 
       if (isMobile) {
         timelineRef.current
-          .to(cameraDolly, {
-            ...cameraDolly,
-            duration: 0.5,
+          .from(cameraDollyRef.current, {
+            ...initialDolly,
           })
           .addLabel("start")
-          .to(cameraDolly, {
+          .to(cameraDollyRef.current, {
             onStart: () => {
-              canRotateUsingPointer.set(false);
+              if (pointerTimeoutRef.current) {
+                clearTimeout(pointerTimeoutRef.current);
+              }
+
+              //canRotateUsingPointer.set(false);
             },
-            onReverseComplete: () => canRotateUsingPointer.set(true),
+            // onReverseComplete: () => {
+            //   if (pointerTimeoutRef.current) {
+            //     clearTimeout(pointerTimeoutRef.current);
+            //   }
+
+            //   pointerTimeoutRef.current = setTimeout(() => {
+            //     canRotateUsingPointer.set(true);
+            //   }, 1000);
+            // },
             z: 105,
             y: 3,
-            focalLength: 1,
             targetY: 0,
             targetZ: -20,
             duration: 30,
@@ -250,80 +242,62 @@ export default function Scene() {
             "<"
           )
           .addLabel("finish")
-          .to(cameraDolly, {
-            z: 80,
-            y: 3,
-            focalLength: 1,
-            targetY: -10,
-            onStart: () => {
-              const velocity =
-                timelineRef.current?.scrollTrigger?.getVelocity();
-              if (velocity && velocity > 250) {
-                // timelineRef.current?.scrollTrigger?.scroll(
-                //   timelineRef.current?.scrollTrigger.labelToScroll("finish")
-                // );
-              }
-            },
-            onComplete: () => {
-              const velocity =
-                timelineRef.current?.scrollTrigger?.getVelocity();
-              if (velocity && velocity < 250) {
-                // let scroll = {
-                //   y: tl.scrollTrigger?.labelToScroll("scrollDamper") ?? 0,
-                // };
-                // setTimeout(() => {
-                //   gsap
-                //     .to(scroll, {
-                //       y:
-                //         (tl.scrollTrigger?.labelToScroll("scrollDamper") ?? 0) +
-                //         500,
-                //       duration: 2,
-                //       onUpdate: () => {
-                //         console.log(scroll.y);
-                //         window.scrollTo(0, scroll.y);
-                //       },
-                //     })
-                //     .play(0);
-                // }, 5);
-              }
-            },
-            targetZ: -85,
-            duration: 5,
+          .to(cameraDollyRef.current, {
+            z: 105,
+            y: 10,
+            targetY: 20,
+            targetZ: 30,
+            duration: 1,
             delay: 0,
             ease: "power1.in",
           })
           .addLabel("scrollDamper");
       } else {
         timelineRef.current
-          ?.to(cameraDolly, {
-            ...cameraDolly,
-            duration: 0.5,
+          ?.from(cameraDollyRef.current, {
+            ...initialDolly,
           })
           .addLabel("start")
-          .to(cameraDolly, {
-            onStart: () => canRotateUsingPointer.set(false),
-            onReverseComplete: () => canRotateUsingPointer.set(true),
+          .to(cameraDollyRef.current, {
             z: -15,
             y: 4,
             targetY: 0,
             targetZ: -85,
-            focalLength: 1,
+            onStart: () => {
+              if (pointerTimeoutRef.current) {
+                clearTimeout(pointerTimeoutRef.current);
+              }
+
+              //canRotateUsingPointer.set(false);
+            },
+            onReverseComplete: () => {
+              if (pointerTimeoutRef.current) {
+                clearTimeout(pointerTimeoutRef.current);
+              }
+
+              pointerTimeoutRef.current = setTimeout(() => {
+                //canRotateUsingPointer.set(true);
+              }, 1000);
+            },
             duration: 10,
             ease: "sine.inOut",
           })
-          .to(cameraDolly, {
-            onStart: () => canRotateUsingPointer.set(false),
-            onReverseComplete: () => canRotateUsingPointer.set(true),
+          .to(cameraDollyRef.current, {
+            onStart: () => {
+              //canRotateUsingPointer.set(false);
+            },
             z: -30,
-            y: -1,
+            y: 2,
             targetY: 0,
             targetZ: -85,
-            focalLength: 1,
             duration: 8,
             ease: "sine.inOut",
           })
           .addLabel("finish")
-          .to(cameraDolly, {
+          .to(cameraDollyRef.current, {
+            onStart: () => {
+              //canRotateUsingPointer.set(false);
+            },
             z: -30,
             y: 0,
             targetY: 0,
@@ -332,169 +306,121 @@ export default function Scene() {
           });
       }
 
-      showreelPosition.set(
-        timelineRef.current.scrollTrigger?.labelToScroll("finish") ?? 0
-      );
+      setTimeout(() => {
+        ScrollSmoother.refresh();
+        showreelPosition.set(
+          timelineRef.current?.scrollTrigger?.labelToScroll("finish") ?? 0
+        );
+      });
     }
-  }, [$isIntroFinished, document.documentElement]);
+  }, [$isIntroFinished]);
 
   const onIncline = useCallback((opt: PerformanceMonitorApi) => {
+    // const reduce = Math.min(1, opt.fps / 45);
+    // const newDpr = reduce;
+    // currentDpr.set(newDpr);
     // config.resolution = Math.min(config.resolution * 2, 4096);
     // config.backsideResolution = Math.min(config.backsideResolution * 2, 2048);
-    // setConfig({ ...config, backside: true });
-    // setIsDofEnabled(true);
+    // config.samples = Math.max(config.samples * 2, 32);
   }, []);
+
+  const { setDpr, invalidate, get: getThreeState } = useThree((s) => s);
 
   const onDecline = useCallback((opt: PerformanceMonitorApi) => {
-    setIsDofEnabled(false);
-    const minRes = isMobile ? 256 : 768;
-    const minBackRes = isMobile ? 16 : 64;
-    const minSamples = isMobile ? 2 : 3;
-    config.resolution = Math.max(config.resolution / 2, minRes);
-    config.backsideResolution = Math.max(
-      config.backsideResolution / 2,
-      minBackRes
-    );
-    config.samples = Math.max(config.samples / 2, minSamples);
-    setConfig({ ...config, backside: true });
+    // const minRes = isMobile ? 256 : 768;
+    // const minBackRes = isMobile ? 16 : 64;
+    // const minSamples = isMobile ? 2 : 3;
+    // config.resolution = Math.max(config.resolution / 2, minRes);
+    // config.backsideResolution = Math.max(
+    //   config.backsideResolution / 2,
+    //   minBackRes
+    // );
+    // config.samples = Math.max(config.samples / 2, minSamples);
+    // crystalRef.current?.updateMatrix();
+    const reduce = Math.min(1, opt.fps / 45);
+    const newDpr = reduce;
+    currentDpr.set(newDpr);
   }, []);
 
-  const onFallback = useCallback((opt: PerformanceMonitorApi) => {}, []);
+  usePerformanceMonitor({ onIncline, onDecline });
 
-  const onChange = useCallback((opt: PerformanceMonitorApi) => {}, []);
-
-  usePerformanceMonitor({ onIncline, onDecline, onFallback, onChange });
-
-  const videoTexture = useVideoTexture("../videoplayback.mp4", {});
-  const bumpTexture = useTexture("bake_disp.png");
+  const videoTexture = useVideoTexture(
+    isMobile ? "../videoplayback_mobile.mp4" : "../videoplayback.mp4",
+    {
+      loop: true,
+      start: true,
+      onVideoFrame: () => invalidate(),
+    }
+  );
+  const bumpTexture = useTexture(
+    isMobile ? "bake_disp_mobile.png" : "bake_disp.png"
+  );
   bumpTexture.flipY = false;
 
-  const buffer = useFBO({ colorSpace: "srgb" });
-
-  useFrame((state) => {
-    state.gl.autoClear = true;
-    state.gl.setRenderTarget(buffer);
-    state.gl.render(crystalRef.current, state.camera);
-  });
-
-  const invalidateTl = useCallback(() => {
-    ScrollTrigger.normalizeScroll(false);
-
-    timelineRef.current?.scrollTrigger?.refresh();
-    timelineRef.current?.scrollTrigger?.scroller.scrollTo(0, 0);
-    timelineRef.current?.scrollTrigger?.refresh();
-    timelineRef.current?.invalidate();
-    ScrollTrigger.normalizeScroll(true);
-  }, [timelineRef.current?.scrollTrigger]);
-
-  useGSAP(() => {
-    if (window.DeviceOrientationEvent) {
-      window.addEventListener("deviceorientation", orientation, false);
-    } else {
-      console.log("DeviceOrientationEvent is not supported");
-    }
-
-    document.documentElement.addEventListener("fullscreenchange", () => {
-      invalidateTl();
-    });
-
-    return () => {
-      if (window.DeviceOrientationEvent) {
-        window.removeEventListener("deviceorientation", orientation, false);
-      }
-
-      document.documentElement.removeEventListener(
-        "fullscreenchange",
-        invalidateTl
-      );
-    };
-  }, [$canRotateUsingPointer, invalidateTl]);
-
   useEffect(() => {
-    if (cameraRef.current) {
+    if (cameraRef.current && crystalRef.current) {
       const { x, y, z } = crystalRef.current.position;
-      cameraRef.current.setLookAt(0, y + 3, -5, x, y, z);
+      cameraRef.current.setLookAt(0, 2, -5, x, y, z);
       cameraRef.current.zoomTo(0.4);
     }
-
-    setTimeout(() => {
-      setConfig({ ...config, backside: true });
-    }, 250);
   }, []);
 
   useFrame((_state, delta) => {
     if (logoRef.current) {
       logoRef.current.rotation.z -= delta;
     }
-
-    if (introCameraRotationRef.current.x !== 0) {
-      cameraRef.current!.rotateTo(
-        introCameraRotationRef.current.x,
-        Math.PI / 2.25,
-        false
-      );
-    } else if (!isMobile && $canRotateUsingPointer) {
-      const { pointer } = _state;
-      const x = pointer.x;
-      const y = pointer.y;
-      const dampingFactor = 6;
-      const additionalVerticalDampingFactor = 2;
-      isMenuVisible.set(true);
-      // const currentCameraPosition = new Vector3();
-      // cameraRef.current?.getPosition(currentCameraPosition);
-
-      // if (
-      //   previousPointerRef.current.x === currentCameraPosition.x &&
-      //   previousPointerRef.current.y === currentCameraPosition.y &&
-      //   previousPointerRef.current.z === currentCameraPosition.z
-      // ) {
-      //   if (!menuTimeoutRef.current) {
-      //     menuTimeoutRef.current = setTimeout(
-      //       () => isMenuVisible.set(true),
-      //       1000
-      //     );
-      //   }
-      // } else {
-      //   if (menuTimeoutRef.current) {
-      //     clearTimeout(menuTimeoutRef.current);
-      //     menuTimeoutRef.current = null;
-      //   }
-      //   isMenuVisible.set(false);
-      // }
-
-      // cameraRef.current?.getPosition(previousPointerRef.current);
-
-      if (cameraRef.current && !isMobile) {
-        cameraRef.current.rotateTo(
-          (x * Math.PI) / 2 / dampingFactor,
-          Math.PI / 2 -
-            ((Math.PI / 2) * (y + 0.6)) /
-              dampingFactor /
-              additionalVerticalDampingFactor,
-          true
-        );
-      }
-    }
   });
+
+  useFrame(
+    throttle((_state) => {
+      if (introCameraRotationRef.current.x !== 0) {
+        cameraRef.current!.rotateTo(
+          introCameraRotationRef.current.x,
+          Math.PI / 2.25,
+          false
+        );
+      } else if (!isMobile && $canRotateUsingPointer) {
+        const { pointer } = _state;
+        const x = pointer.x;
+        const y = pointer.y;
+        const dampingFactor = 6;
+        const additionalVerticalDampingFactor = 2;
+
+        if (cameraRef.current) {
+          cameraRef.current.rotateTo(
+            (x * Math.PI) / 2 / dampingFactor,
+            Math.PI / 2 -
+              ((Math.PI / 2) * (y + 0.6)) /
+                dampingFactor /
+                additionalVerticalDampingFactor,
+            true
+          );
+        }
+      }
+    }),
+    100
+  );
+
+  const gpu = useDetectGPU();
 
   return (
     <group>
-      <BakeShadows />
-      <AdaptiveDpr pixelated />
-      <EffectComposer autoClear={true}>
+      <EffectComposerComp autoClear={true} depthBuffer={true}>
         <Bloom opacity={1} />
         <Noise opacity={0.5} blendFunction={BlendFunction.COLOR_DODGE} />
-        {isDofEnabled ? (
+
+        {isDofEnabled && !gpu.gpu?.toLowerCase().includes("intel") ? (
           <DepthOfField
-            focusDistance={0}
-            focalLength={cameraDolly.focalLength}
-            bokehScale={14}
+            target={crystalRef.current?.position ?? [0, 0, 0]}
+            focalLength={700}
+            bokehScale={100}
           />
         ) : (
           <></>
         )}
+
         <Vignette opacity={1} />
-      </EffectComposer>
+      </EffectComposerComp>
       <primitive position={[0, 0, 0]} object={scene} />
       <primitive position={[0, 0, -92]} object={meshes["Plane"]!}>
         <meshPhongMaterial
@@ -503,7 +429,7 @@ export default function Scene() {
           emissiveMap={videoTexture}
           emissive="#ffffff"
           emissiveIntensity={0.75}
-          toneMapped={false}
+          toneMapped={true}
         />
       </primitive>
       <pointLight intensity={500} position={[0, -10, -70]} color="#2C67FF" />
@@ -512,11 +438,10 @@ export default function Scene() {
           distance={65}
           color="#FFAFDF"
           angle={3.0}
-          position={[-16, 8, -15]}
+          position={[0, 0, 0]}
           attenuation={25}
           anglePower={6}
           opacity={0.1}
-          target={screen.current!}
         />
       )}
       <CameraControls
@@ -525,8 +450,7 @@ export default function Scene() {
         ref={cameraRef}
         mouseButtons={{ left: 0, middle: 0, right: 0, wheel: 0 }}
       />
-
-      <mesh ref={crystalRef} position={[0, 0, -20]}>
+      <mesh ref={crystalRef} position={[0, -1.5, -20]}>
         <primitive
           position={[0, 0.925, 0]}
           ref={logoRef}
@@ -535,12 +459,8 @@ export default function Scene() {
         <primitive position={[0, 0, 0]} object={meshes["Crystal002_1"]!}>
           <MeshTransmissionMaterial
             {...config}
-            allowOverride
-            forceSinglePass
-            transmissionSampler={false}
             bumpMap={bumpTexture}
             bumpScale={15}
-            toneMapped={true}
           />
         </primitive>
         <primitive position={[0, 0, 0]} object={meshes["Crystal002"]!} />

@@ -1,0 +1,113 @@
+---
+import { Fragment } from "react";
+import type { Project } from "../../../../types/portfolio";
+import { cn } from "clsx-for-tailwind";
+import { getImage, Image } from "astro:assets";
+import ThumbBg2Raw from "../../../../assets/thumb_bg_2.png"
+import { projects } from "../projects";
+import BlueEllipse from "../../../../assets/blue_ellipse.png";
+
+const ThumbBg2 = await getImage({ src: ThumbBg2Raw, format: "avif" })
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+
+const imported = import.meta.glob<{ default: ImageMetadata }>(
+  "/src/assets/projects/**/miniatura.{jpeg,jpg,png,gif}"
+);
+
+const getOptimizedThumbnail = async () => {
+  for (const [path, imagePromise] of Object.entries(imported)) {
+    if (!path.includes(project.thumbSrc)) {
+      continue;
+    }
+    
+    const importedImage = await imagePromise();
+    const image = importedImage.default;
+    return await getImage({ src: image, format: "avif", width: 920  });
+  }
+
+  return null;
+}
+
+const optimizedThumbnail = (await getOptimizedThumbnail())!
+
+const id = `card-a-${project.name.replace(" ", "")}`;
+---
+
+<script>
+  import { isModalOpen, modalContents } from "../../store/animationStore";
+
+  class CardA extends HTMLElement {
+    connectedCallback() {
+      this.addEventListener("click", () => {
+        modalContents.set(JSON.parse(this.dataset.project!));
+        isModalOpen.set(true);
+      });
+    }
+  }
+
+  customElements.define("card-a", CardA);
+</script>
+
+<card-a
+  id={id}
+  data-project={JSON.stringify(project)}
+  class="md:mb-0 my-4 md:my-0 scale-100 origin-top md:-mt-24 mx-auto aspect-video rounded-2xl w-full md:w-2/3 h-auto relative md:-top-24 z-8"
+  
+>
+{
+      (projects.findIndex((x) => x.name === project.name) - 6) % 15 === 0 && (
+        <Image
+          src={BlueEllipse}
+          alt=""
+          class="opacity-25 absolute -top-36 scale-150 -z-1"
+          format="avif"
+          loading="lazy"
+        />
+      )
+    }
+  <article
+    data-speed="1.1"
+    id={`cardA-${project.name.replaceAll(" ", "")}-article`}
+    style={{
+      backgroundImage: `url(${ThumbBg2.src})`,
+      backgroundSize: "cover",
+    }}
+    class={cn(
+      `p-4 cursor-pointer group rounded-2xl w-full h-auto absolute`
+    )}
+  >
+    <div
+      class="absolute w-full top-[92%] md:top-[97%] left-1/5 md:left-1/5 z-20"
+    >
+      <h3
+        class="mt-1 text-white text-xl md:text-3xl font-bold text-shadow-md text-shadow-black-500"
+      >
+        {project.name}
+      </h3>
+      <h4
+        class="-mt-1 text-white text-sm md:text-xl  text-shadow-md text-shadow-black-500 font-[Chivo_Mono]"
+      >
+        {project.clientName}
+      </h4>
+    </div>
+
+    <div
+      class={`relative w-full h-full bg-no-repeat rounded-xl group-hover:scale-95 transition-transform duration-750 ease-out`}
+    >
+      <img
+        class="block rounded-xl w-full aspect-video"
+        crossorigin="anonymous"
+        src={optimizedThumbnail.src}
+        srcset={optimizedThumbnail.srcSet.attribute}
+        loading="lazy"
+        decoding="async"
+        alt=""
+      />
+    </div>
+  </article>
+</card-a>
