@@ -324,7 +324,7 @@ export default function Scene({ gltf, inView }: SceneProps) {
     // config.samples = Math.max(config.samples * 2, 32);
   }, []);
 
-  const { setDpr, invalidate, get: getThreeState } = useThree((s) => s);
+  const { invalidate } = useThree((s) => s);
 
   const onDecline = useCallback((opt: PerformanceMonitorApi) => {
     // const minRes = isMobile ? 256 : 768;
@@ -405,8 +405,9 @@ export default function Scene({ gltf, inView }: SceneProps) {
 
   return (
     <group>
-      <EffectComposerComp autoClear={true} depthBuffer={true}>
-        <Bloom opacity={1} />
+      {/* Disable multisampling to avoid SpotLight edge glitches */}
+      <EffectComposerComp autoClear depthBuffer multisampling={0}>
+        <Bloom intensity={2} />
         <Noise opacity={0.5} blendFunction={BlendFunction.COLOR_DODGE} />
 
         {isDofEnabled && !gpu.gpu?.toLowerCase().includes("intel") ? (
@@ -418,7 +419,23 @@ export default function Scene({ gltf, inView }: SceneProps) {
         ) : (
           <></>
         )}
-
+        {!isMobile ? (
+          <SpotLight
+            distance={55}
+            radiusBottom={15}
+            penumbra={15}
+            color="#FFAFDF"
+            angle={3}
+            position={[-16, 10, -15]}
+            attenuation={35}
+            intensity={0.5}
+            volumetric
+            anglePower={6}
+            target={meshes["Plane"]!}
+          />
+        ) : (
+          <></>
+        )}
         <Vignette opacity={1} />
       </EffectComposerComp>
       <primitive position={[0, 0, 0]} object={scene} />
@@ -433,17 +450,6 @@ export default function Scene({ gltf, inView }: SceneProps) {
         />
       </primitive>
       <pointLight intensity={500} position={[0, -10, -70]} color="#2C67FF" />
-      {!isMobile && (
-        <SpotLight
-          distance={65}
-          color="#FFAFDF"
-          angle={3.0}
-          position={[0, 0, 0]}
-          attenuation={25}
-          anglePower={6}
-          opacity={0.1}
-        />
-      )}
       <CameraControls
         makeDefault
         azimuthRotateSpeed={0.01}

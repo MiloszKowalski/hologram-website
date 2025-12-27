@@ -7,7 +7,7 @@ import {
 } from "@react-three/drei";
 import { SRGBColorSpace, ACESFilmicToneMapping } from "three";
 import Scene from "./Scene";
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 import { isMobile } from "react-device-detect";
 //import { Perf } from "r3f-perf";
 import { currentDpr, isSceneInView } from "../store/animationStore";
@@ -36,7 +36,6 @@ export const ThreeCanvas = () => {
         camera={{ fov: isMobile ? 18 : 20, far: 1000 }}
         gl={{
           autoClear: true,
-
           toneMapping: ACESFilmicToneMapping,
           toneMappingExposure: 1,
           outputColorSpace: SRGBColorSpace,
@@ -44,7 +43,7 @@ export const ThreeCanvas = () => {
           transmissionResolutionScale: 0.25,
         }}
       >
-        <PerformanceMonitor bounds={(ref) => [45, 60]}>
+        <PerformanceMonitor bounds={() => [45, 60]}>
           <Scene inView={$isSceneInView} gltf={gltf} />
           {/* <AdaptiveDpr pixelated /> */}
           <Preload all />
