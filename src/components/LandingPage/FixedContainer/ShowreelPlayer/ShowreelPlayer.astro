@@ -1,0 +1,82 @@
+---
+
+---
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollSmoother } from "gsap/ScrollSmoother";
+  import { isShowreelPlayerVisible } from "../../store/animationStore";
+  import Plyr from "plyr";
+  import "plyr/css";
+
+  const backdropAnimation = gsap.fromTo(
+    "#showreel-player",
+    { opacity: 0, visibility: "hidden" },
+    {
+      opacity: 1,
+      visibility: "visible",
+      ease: "power2.inOut",
+      paused: true,
+    },
+  );
+
+  const scrollHandler = () => {
+    if (player.fullscreen.active) {
+      return
+    }
+
+    player.pause()
+    isShowreelPlayerVisible.set(false)
+    window.removeEventListener('scroll', scrollHandler)
+  }
+
+  isShowreelPlayerVisible.subscribe((isVisible) => {
+    if (isVisible) {
+      setTimeout(() => {
+        window.addEventListener('scroll', scrollHandler)
+      }, 750);
+      backdropAnimation.duration(0.75).play(backdropAnimation.time());
+    } else {
+      backdropAnimation.duration(0.25).reverse(backdropAnimation.time());
+    }
+  });
+
+  const player = new Plyr("video", {
+    settings: ["quality"],
+    controls: [
+      "play-large",
+      "play",
+      "progress",
+      "current-time",
+      "mute",
+      "volume",
+      "settings",
+      "fullscreen",
+    ],
+    quality: { default: 1080, options: [2160, 1440, 1080, 720, 480] },
+    loop: {
+      active: true
+    },
+    ratio: "16:9"
+  });
+
+  player.on('enterfullscreen', () => ScrollSmoother.get()?.paused(true))
+  player.on('exitfullscreen', () => ScrollSmoother.get()?.paused(false))
+</script>
+<div
+  id="showreel-player"
+  class="pointer-events-auto w-full mx-auto p-0 md:p-8 md:px-16 absolute top-1/2 -translate-y-[30%] md:-translate-y-3/7 left-1/2 -translate-x-1/2 md:w-4/5"
+>
+  <div class="container mx-auto">
+    <video
+      controls
+      poster="https://public-storage.studiohologram.pl/miniatura.png"
+    >
+      <source src="https://public-storage.studiohologram.pl/2160.mp4" type="video/mp4" size="2160" />
+      <source src="https://public-storage.studiohologram.pl/1440.mp4" type="video/mp4" size="1440" />
+      <source src="https://public-storage.studiohologram.pl/1080.mp4" type="video/mp4" size="1080" />
+      <source src="https://public-storage.studiohologram.pl/720.mp4" type="video/mp4" size="720" />
+      <source src="https://public-storage.studiohologram.pl/480.mp4" type="video/mp4" size="480" />
+    </video>
+  </div>
+</div>

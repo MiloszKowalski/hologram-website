@@ -1,0 +1,138 @@
+---
+import Mouse from "../../../assets/mouse.svg";
+import Hand from "../../../assets/hand.svg";
+import ArrowRight from "../../../assets/arrow-right.svg";
+---
+
+<script>
+  import { atom } from "nanostores";
+  import {
+    canRotateUsingPointer,
+    isMenuExpanded,
+    isSceneInView,
+    showreelPosition,
+  } from "../store/animationStore";
+  import { gsap } from "gsap";
+  import { ScrollSmoother } from "gsap/ScrollSmoother";
+
+  const areButtonsVisible = atom(false);
+
+  canRotateUsingPointer.subscribe(async (canRotate) => {
+    areButtonsVisible.set(canRotate);
+  });
+
+  isMenuExpanded.subscribe(async (isExpanded) => {
+    if (isExpanded) {
+      areButtonsVisible.set(false);
+    } else if (canRotateUsingPointer.get()) {
+      areButtonsVisible.set(true)
+    }
+  });
+
+  areButtonsVisible.subscribe((areVisible) => {
+    if (!areVisible) {
+      gsap.to("#ui-content", {
+        opacity: 0,
+        visibility: "hidden",
+        duration: 0.5,
+      });
+      gsap.to("#ui-prompt > *", {
+        opacity: 0,
+        duration: 0.5,
+      });
+      gsap.to(".ui-button", {
+        y: 20,
+        opacity: 0,
+        duration: 0.5,
+      });
+    } else {
+      gsap.to("#ui-content", {
+        opacity: 1,
+        visibility: "visible",
+        duration: 0.5,
+        delay: 0.25,
+      });
+      gsap.to("#ui-prompt > *", {
+        opacity: 1,
+        duration: 0.5,
+        stagger: 0.15,
+      });
+      gsap.to(".ui-button", {
+        y: 0,
+        opacity: 1,
+        duration: 0.5,
+        stagger: 0.2,
+        delay: 0.75,
+      });
+    }
+  });
+
+  const scrollTo = (selector: string | number, position?: string) => {
+    const scrollSmoother = ScrollSmoother.get();
+
+    scrollSmoother?.paused(false);
+
+    if (isSceneInView.get()) {
+      scrollSmoother?.refresh(true);
+    }
+
+    setTimeout(() => scrollSmoother?.scrollTo(selector, true, position), 50);
+  };
+
+  document.getElementById("showreel-ui-button")!.onclick = () =>
+    scrollTo(showreelPosition.get());
+  document.getElementById("portfolio-ui-button")!.onclick = () =>
+    scrollTo("#welcome", "65% center");
+</script>
+
+<div
+  id="user-interface"
+  class="pointer-events-none text-white opacity-100 w-screen top-0 left-0 z-999999 absolute h-screen"
+>
+  <div class="relative h-full">
+    <div
+      id="ui-content"
+      class="absolute w-full gap-2 invisible opacity-0 bg-radial from-0% to-60% md:p-56 from-[#000000bb] to-transparent bottom-10 md:-bottom-36 md:w-auto grid grid-cols-2 md:gap-8 left-1/2 -translate-x-1/2"
+    >
+      <div class="col-start-1 col-span-2 text-center">
+        <div
+          id="ui-prompt"
+          class="flex flex-col gap-1 md:gap-4 items-center opacity-85"
+        >
+          <p class="text-xs opacity-0">Przewiń w dół</p>
+          <Mouse class="opacity-0" />
+          <Hand class="opacity-0" />
+          <p class="text-xs opacity-0 -mt-8 mb-4 md:mt-8 md:-mb-4">
+            albo zobacz
+          </p>
+        </div>
+      </div>
+      <div class="ui-button">
+        <button
+          id="showreel-ui-button"
+          class="pointer-events-auto group relative box-border flex ml-auto md:mx-auto border-2 border-white pt-3.5 font-safari-safe cursor-pointer text-[#010419] bg-blend-darken font-bold bg-white rounded-xl px-8 py-2 hover:scale-110 hover:brightness-110 transition-all duration-250"
+        >
+          <span
+            class="relative group-hover:translate-x-0 transition-transform -left-2 translate-x-2"
+            >SHOWREEL</span
+          ><ArrowRight
+            class="h-5 w-5 absolute opacity-0 transition-opacity group-hover:opacity-100 -translate-y-px right-3.5"
+          />
+        </button>
+      </div>
+      <div class="ui-button">
+        <button
+          id="portfolio-ui-button"
+          class="pointer-events-auto flex group relative backdrop-blur-lg mr-auto md:mx-auto pt-3.5 font-safari-safe cursor-pointer text-white font-bold bg-transparent border-2 border-white rounded-xl px-8 py-2 hover:scale-110 hover:brightness-110 duration-250"
+        >
+          <span
+            class="relative group-hover:translate-x-0 transition-transform -left-2 translate-x-2"
+            >PORTFOLIO</span
+          ><ArrowRight
+            class="h-5 w-5 absolute **:fill-white opacity-0 transition-opacity group-hover:opacity-100 -translate-y-px right-3.5"
+          />
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -3,8 +3,10 @@ import PortfolioDetailsModal from "../Portfiolio/Details/PortfolioDetailsModal.a
 import FadeInOverlay from "../Scene/FadeInOverlay.astro";
 import { BraveOrientationModal } from "../Scene/Modals/BraveOrientationModal";
 import IOSOrientationModal from "../Scene/Modals/IOSOrientationModal.astro";
+import UserInterface from "../Scene/UserInterface.astro";
 import DesktopMenu from "./Menu/DesktopMenu.astro";
 import MobileMenu from "./Menu/MobileMenu.astro";
+import ShowreelPlayer from "./ShowreelPlayer/ShowreelPlayer.astro";
 ---
 
 <div
@@ -20,6 +22,8 @@ import MobileMenu from "./Menu/MobileMenu.astro";
   </div>
   <PortfolioDetailsModal />
   <FadeInOverlay />
+  <UserInterface />
+  <ShowreelPlayer />
 
   <IOSOrientationModal />
   <BraveOrientationModal client:only />

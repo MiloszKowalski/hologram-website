@@ -28,3 +28,5 @@ export const currentDpr = atom(1);
 export const isSceneInView = atom(true);
 
 export const isMenuExpanded = atom(false);
+
+export const isShowreelPlayerVisible = atom(false);

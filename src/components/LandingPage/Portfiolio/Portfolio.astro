@@ -10,12 +10,23 @@ export interface PortfolioProps {
 
 const { projects } = Astro.props as PortfolioProps
 ---
+<script>
+  var visibleProjects = 3
 
+  const seeMoreButton = document.getElementById("see-more-button")
+  seeMoreButton?.addEventListener('click', () => {
+    visibleProjects += 3
+      const projectsGrid = document.getElementById("projects-grid")
+
+      projectsGrid!.style.gridTemplateRows = "1fr 1fr 1fr"
+  })
+
+</script>
 <section class="p-4 md:p-0 -mt-8 md:mt-96">
   <h2 class="text-white text-2xl font-bold text-center relative -top-12 md:-top-64">
     NASZE PROJEKTY
   </h2>
-  <div class="flex flex-col gap-20 md:gap-16 max-w-7xl mx-auto md:px-16">
+  <div id="projects-grid" class="grid grid-cols-1 gap-20 md:gap-16 max-w-7xl mx-auto md:px-16">
     {projects.map((project, index) => {
       if (index % 3 === 0) {
         return <CardA project={project} />
@@ -26,7 +37,7 @@ const { projects } = Astro.props as PortfolioProps
       return <CardC project={project} />
     })}
   </div>
-  <!-- <button class="mx-auto md:-mt-16 pt-3.5 font-safari-safe mt-36 text-md md:text-xl cursor-pointer text-white bg-[#2C67FF] rounded-xl px-8 py-2 font-bold hover:scale-110 hover:brightness-110 transition-all duration-250">
+  <!-- <button id="see-more-button" class="mx-auto md:-mt-16 pt-3.5 font-safari-safe mt-36 text-md md:text-xl cursor-pointer text-white bg-[#2C67FF] rounded-xl px-8 py-2 font-bold hover:scale-110 hover:brightness-110 transition-all duration-250">
     ZOBACZ WIĘCEJ
   </button> -->
 </section>

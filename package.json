@@ -27,6 +27,7 @@
     "lodash.throttle": "^4.1.1",
     "nanostores": "1.1.0",
     "noisify-canvas": "1.1.1",
+    "plyr": "^3.8.4",
     "r3f-perf": "7.2.3",
     "react": "19.2.3",
     "react-device-detect": "2.2.3",

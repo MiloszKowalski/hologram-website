@@ -16,6 +16,7 @@ const Logo = await getImage({
     isMenuVisible,
     isSceneInView,
     isMenuExpanded,
+    canRotateUsingPointer,
   } from "../../store/animationStore";
   import ScrollTrigger from "gsap/ScrollTrigger";
   import ScrollSmoother from "gsap/ScrollSmoother";
@@ -159,10 +160,14 @@ const Logo = await getImage({
     scrollSmoother?.paused(false);
     
     if (isSceneInView.get()) {
-      scrollSmoother?.refresh(true);
+      scrollSmoother?.refresh(true)
     }
     
-    scrollSmoother?.scrollTo(selector, true, position);
+    setTimeout(() => scrollSmoother?.scrollTo(selector, true, position), 50)
+    ;
+
+    // // For now every menu element scrolls beyond the interactive 3D scene
+    // canRotateUsingPointer.set(false)
   };
 
   document.getElementById("showreel-button")!.onclick = () =>

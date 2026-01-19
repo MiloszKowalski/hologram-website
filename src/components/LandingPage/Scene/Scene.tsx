@@ -33,6 +33,7 @@ import {
   showreelPosition,
   isLoading,
   currentDpr,
+  isShowreelPlayerVisible,
 } from "../store/animationStore";
 import { useLevaConfig } from "./hooks/useLevaConfig";
 import { useOrientationControls } from "./hooks/useOrientationControls";
@@ -56,6 +57,7 @@ export default function Scene({ gltf, inView }: SceneProps) {
 
   const $isIntroFinished = useStore(isIntroFinished);
   const $canRotateUsingPointer = useStore(canRotateUsingPointer);
+  const $isShowreelPlayerVisible = useStore(isShowreelPlayerVisible);
 
   const isDofEnabled = !isMobile;
 
@@ -105,7 +107,9 @@ export default function Scene({ gltf, inView }: SceneProps) {
           isMenuVisible.set(true);
           canRotateUsingPointer.set(true);
 
-          cameraRef.current!.elevate(2, true);
+          if (!isMobile) {
+            cameraRef.current!.elevate(1.6, true);
+          }
 
           welcomeScrollPositionRef.current =
             ScrollSmoother.get()?.offset("#welcome") ?? 0;
@@ -148,10 +152,10 @@ export default function Scene({ gltf, inView }: SceneProps) {
         0,
         cameraDollyRef.current.targetY,
         cameraDollyRef.current.targetZ,
-        true
+        true,
       );
     }, 100),
-    []
+    [],
   );
 
   useGSAP(() => {
@@ -159,21 +163,20 @@ export default function Scene({ gltf, inView }: SceneProps) {
     timelineRef.current = gsap
       .timeline({
         invalidateOnRefresh: true,
-        // yes, we can add it to an entire timeline!
         scrollTrigger: {
           invalidateOnRefresh: true,
           trigger: "#hero",
-          pin: "#hero", // pin the trigger element while active
-          start: "top top", // when the top of the trigger hits the top of the viewport
-          end: "+=2500px", // end after scrolling 500px beyond the start
+          pin: "#hero",
+          start: "top top",
+          end: "+=2500px",
           //markers: true,
-          scrub: 0, // smooth scrubbing, takes 1 second to "catch up" to the scrollbar
+          scrub: 0,
           snap: {
-            snapTo: "labelsDirectional", // snap to the closest label in the timeline
+            snapTo: "labelsDirectional",
             inertia: false,
-            duration: { min: 0.01, max: 0.3 }, // the snap animation should be at least 0.2 seconds, but no more than 3 seconds (determined by velocity)
-            delay: 0, // wait 0.2 seconds from the last scroll event before doing the snapping
-            ease: "linear", // the ease of the snap animation ("power3" by default)
+            duration: { min: 0.01, max: 0.3 },
+            delay: 0,
+            ease: "linear",
           },
           onUpdate: onTlUpdate,
         },
@@ -207,22 +210,6 @@ export default function Scene({ gltf, inView }: SceneProps) {
           })
           .addLabel("start")
           .to(cameraDollyRef.current, {
-            onStart: () => {
-              if (pointerTimeoutRef.current) {
-                clearTimeout(pointerTimeoutRef.current);
-              }
-
-              //canRotateUsingPointer.set(false);
-            },
-            // onReverseComplete: () => {
-            //   if (pointerTimeoutRef.current) {
-            //     clearTimeout(pointerTimeoutRef.current);
-            //   }
-
-            //   pointerTimeoutRef.current = setTimeout(() => {
-            //     canRotateUsingPointer.set(true);
-            //   }, 1000);
-            // },
             z: 105,
             y: 3,
             targetY: 0,
@@ -238,11 +225,22 @@ export default function Scene({ gltf, inView }: SceneProps) {
               duration: 8,
               delay: 1,
               ease: "power3.in",
+              onComplete: () => {
+                isShowreelPlayerVisible.set(true);
+
+                //canRotateUsingPointer.set(false);
+              },
             },
-            "<"
+            "<",
           )
           .addLabel("finish")
           .to(cameraDollyRef.current, {
+            onReverseComplete: () => {
+              isShowreelPlayerVisible.set(true);
+            },
+            onComplete: () => {
+              isShowreelPlayerVisible.set(false);
+            },
             z: 105,
             y: 10,
             targetY: 20,
@@ -284,7 +282,12 @@ export default function Scene({ gltf, inView }: SceneProps) {
           })
           .to(cameraDollyRef.current, {
             onStart: () => {
+              isShowreelPlayerVisible.set(true);
+
               //canRotateUsingPointer.set(false);
+            },
+            onReverseComplete: () => {
+              isShowreelPlayerVisible.set(false);
             },
             z: -30,
             y: 2,
@@ -295,8 +298,11 @@ export default function Scene({ gltf, inView }: SceneProps) {
           })
           .addLabel("finish")
           .to(cameraDollyRef.current, {
-            onStart: () => {
-              //canRotateUsingPointer.set(false);
+            onComplete: () => {
+              isShowreelPlayerVisible.set(false);
+            },
+            onReverseComplete: () => {
+              isShowreelPlayerVisible.set(true);
             },
             z: -30,
             y: 0,
@@ -309,7 +315,7 @@ export default function Scene({ gltf, inView }: SceneProps) {
       setTimeout(() => {
         ScrollSmoother.refresh();
         showreelPosition.set(
-          timelineRef.current?.scrollTrigger?.labelToScroll("finish") ?? 0
+          timelineRef.current?.scrollTrigger?.labelToScroll("finish") ?? 0,
         );
       });
     }
@@ -350,10 +356,10 @@ export default function Scene({ gltf, inView }: SceneProps) {
       loop: true,
       start: true,
       onVideoFrame: () => invalidate(),
-    }
+    },
   );
   const bumpTexture = useTexture(
-    isMobile ? "bake_disp_mobile.png" : "bake_disp.png"
+    isMobile ? "bake_disp_mobile.png" : "bake_disp.png",
   );
   bumpTexture.flipY = false;
 
@@ -377,7 +383,7 @@ export default function Scene({ gltf, inView }: SceneProps) {
         cameraRef.current!.rotateTo(
           introCameraRotationRef.current.x,
           Math.PI / 2.25,
-          false
+          false,
         );
       } else if (!isMobile && $canRotateUsingPointer) {
         const { pointer } = _state;
@@ -393,12 +399,12 @@ export default function Scene({ gltf, inView }: SceneProps) {
               ((Math.PI / 2) * (y + 0.6)) /
                 dampingFactor /
                 additionalVerticalDampingFactor,
-            true
+            true,
           );
         }
       }
     }),
-    100
+    100,
   );
 
   const gpu = useDetectGPU();
@@ -440,14 +446,21 @@ export default function Scene({ gltf, inView }: SceneProps) {
       </EffectComposerComp>
       <primitive position={[0, 0, 0]} object={scene} />
       <primitive position={[0, 0, -92]} object={meshes["Plane"]!}>
-        <meshPhongMaterial
-          map={videoTexture}
-          side={0}
-          emissiveMap={videoTexture}
-          emissive="#ffffff"
-          emissiveIntensity={0.75}
-          toneMapped={true}
-        />
+        {!$isShowreelPlayerVisible ? (
+          <meshPhongMaterial
+            map={videoTexture}
+            side={0}
+            emissiveMap={videoTexture}
+            emissive="#ffffff"
+            emissiveIntensity={0.75}
+            toneMapped={true}
+          />
+        ) : (
+          <meshStandardMaterial
+            attach="material"
+            color="black"
+          ></meshStandardMaterial>
+        )}
       </primitive>
       <pointLight intensity={500} position={[0, -10, -70]} color="#2C67FF" />
       <CameraControls
