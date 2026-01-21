@@ -10,6 +10,7 @@ import ArrowRight from "../../../assets/arrow-right.svg";
     canRotateUsingPointer,
     isMenuExpanded,
     isSceneInView,
+    isShowreelPlayerVisible,
     showreelPosition,
   } from "../store/animationStore";
   import { gsap } from "gsap";
@@ -79,8 +80,11 @@ import ArrowRight from "../../../assets/arrow-right.svg";
     setTimeout(() => scrollSmoother?.scrollTo(selector, true, position), 50);
   };
 
-  document.getElementById("showreel-ui-button")!.onclick = () =>
+  document.getElementById("showreel-ui-button")!.onclick = () => {
     scrollTo(showreelPosition.get());
+    isShowreelPlayerVisible.set(true)
+  }
+
   document.getElementById("portfolio-ui-button")!.onclick = () =>
     scrollTo("#welcome", "65% center");
 </script>
@@ -89,10 +93,10 @@ import ArrowRight from "../../../assets/arrow-right.svg";
   id="user-interface"
   class="pointer-events-none text-white opacity-100 w-screen top-0 left-0 z-999999 absolute h-screen"
 >
-  <div class="relative h-full">
+  <div class="relative h-svh">
     <div
       id="ui-content"
-      class="absolute w-full gap-2 invisible opacity-0 bg-radial from-0% to-60% md:p-56 from-[#000000bb] to-transparent bottom-10 md:-bottom-36 md:w-auto grid grid-cols-2 md:gap-8 left-1/2 -translate-x-1/2"
+      class="absolute w-full gap-2 invisible opacity-0 bg-radial from-0% to-60% md:p-56 from-[#000000bb] to-transparent bottom-3 md:-bottom-36 md:w-auto grid grid-cols-2 md:gap-8 left-1/2 -translate-x-1/2"
     >
       <div class="col-start-1 col-span-2 text-center">
         <div
@@ -102,7 +106,7 @@ import ArrowRight from "../../../assets/arrow-right.svg";
           <p class="text-xs opacity-0">Przewiń w dół</p>
           <Mouse class="opacity-0" />
           <Hand class="opacity-0" />
-          <p class="text-xs opacity-0 -mt-8 mb-4 md:mt-8 md:-mb-4">
+          <p class="text-xs opacity-0 -mt-10 mb-1 md:mt-8 md:-mb-4">
             albo zobacz
           </p>
         </div>

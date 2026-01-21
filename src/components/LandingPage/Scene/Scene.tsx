@@ -225,22 +225,11 @@ export default function Scene({ gltf, inView }: SceneProps) {
               duration: 8,
               delay: 1,
               ease: "power3.in",
-              onComplete: () => {
-                isShowreelPlayerVisible.set(true);
-
-                //canRotateUsingPointer.set(false);
-              },
             },
             "<",
           )
           .addLabel("finish")
           .to(cameraDollyRef.current, {
-            onReverseComplete: () => {
-              isShowreelPlayerVisible.set(true);
-            },
-            onComplete: () => {
-              isShowreelPlayerVisible.set(false);
-            },
             z: 105,
             y: 10,
             targetY: 20,
@@ -281,14 +270,6 @@ export default function Scene({ gltf, inView }: SceneProps) {
             ease: "sine.inOut",
           })
           .to(cameraDollyRef.current, {
-            onStart: () => {
-              isShowreelPlayerVisible.set(true);
-
-              //canRotateUsingPointer.set(false);
-            },
-            onReverseComplete: () => {
-              isShowreelPlayerVisible.set(false);
-            },
             z: -30,
             y: 2,
             targetY: 0,
@@ -298,12 +279,6 @@ export default function Scene({ gltf, inView }: SceneProps) {
           })
           .addLabel("finish")
           .to(cameraDollyRef.current, {
-            onComplete: () => {
-              isShowreelPlayerVisible.set(false);
-            },
-            onReverseComplete: () => {
-              isShowreelPlayerVisible.set(true);
-            },
             z: -30,
             y: 0,
             targetY: 0,

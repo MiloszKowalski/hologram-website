@@ -1,10 +1,11 @@
 <script>
-  import {
+import {
     canRotateUsingPointer,
     isIntroFinished,
     isMenuExpanded,
     isMenuVisible,
     isSceneInView,
+    isShowreelPlayerVisible,
     showreelPosition,
   } from "../../store/animationStore";
   import gsap from "gsap";
@@ -73,7 +74,7 @@ import { isMobile } from "react-device-detect";
     }
   };
 
-  const mobileGoTo = (selector: string | number, position?: string) => {
+  const mobileGoTo = (selector: string | number, position?: string, onComplete?: () => void) => {
     toggleMenu();
 
     canRotateUsingPointer.set(false);
@@ -98,6 +99,7 @@ import { isMobile } from "react-device-detect";
         onUpdate: () => {
           ScrollSmoother.get()?.scrollTop(curr.x);
         },
+        onComplete: onComplete ?? (() => {}),
         duration: time,
       });
     }, 500);
@@ -126,8 +128,9 @@ import { isMobile } from "react-device-detect";
   
   document.getElementById("hamburger")!.onclick = toggleMenu;
 
-  document.getElementById("mobile-showreel-button")!.onclick = () =>
-    mobileGoTo(showreelPosition.get());
+  document.getElementById("mobile-showreel-button")!.onclick = () => 
+    mobileGoTo(showreelPosition.get(), "top top", () => isShowreelPlayerVisible.set(true));
+
   document.getElementById("mobile-portfolio-button")!.onclick = () =>
     mobileGoTo("#welcome");
   document.getElementById("mobile-about-button")!.onclick = () =>

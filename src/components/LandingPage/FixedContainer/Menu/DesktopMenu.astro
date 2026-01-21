@@ -16,7 +16,7 @@ const Logo = await getImage({
     isMenuVisible,
     isSceneInView,
     isMenuExpanded,
-    canRotateUsingPointer,
+    isShowreelPlayerVisible,
   } from "../../store/animationStore";
   import ScrollTrigger from "gsap/ScrollTrigger";
   import ScrollSmoother from "gsap/ScrollSmoother";
@@ -170,8 +170,11 @@ const Logo = await getImage({
     // canRotateUsingPointer.set(false)
   };
 
-  document.getElementById("showreel-button")!.onclick = () =>
+  document.getElementById("showreel-button")!.onclick = () => {
     desktopGoTo(showreelPosition.get());
+    isShowreelPlayerVisible.set(true)
+  }
+
   document.getElementById("portfolio-button")!.onclick = () =>
     desktopGoTo("#welcome", "65% center");
   document.getElementById("about-button")!.onclick = () =>
