@@ -121,6 +121,7 @@ export default function Scene({ gltf, inView }: SceneProps) {
 
       if ($isIntroFinished) {
         introAnimationRef.current.timeScale(3);
+        ScrollSmoother.get()!.scrollTo(0, false);
       } else {
         isLoading.set(false);
         introAnimationRef.current.timeScale(1);

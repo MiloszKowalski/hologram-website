@@ -1,6 +1,4 @@
-import type { Project } from "../../../types/portfolio";
-
-export const projects: Project[] = [
+export const projects = [
   {
     name: `Proszę tańcz`,
     clientName: "Dawid Kwiatkowski / Kayah",

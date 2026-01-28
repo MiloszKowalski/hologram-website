@@ -3,28 +3,36 @@ import { ProjectInfo } from "./ProjectInfo";
 import { SeeTheWholeThingButton } from "./SeeTheWholeThingButton";
 import { StillsGrid } from "./StillsGrid";
 import { getImage } from "astro:assets";
+
+import { contentfulClient } from "../../../../lib/contentful";
+import { toProjects } from "../../../../types/portfolio";
 import type { GetImageResult } from "astro";
+import type { ProjectCollection, TypeProjectSkeleton } from "../../../../types/TypeProject";
 
-const imported = import.meta.glob<{ default: ImageMetadata }>(
-  "/src/assets/projects/**/*.{jpeg,jpg,png,gif}"
-);
 
-const imageData: [[string, GetImageResult]?] = [];
+const entries: ProjectCollection = await contentfulClient.withoutUnresolvableLinks.getEntries<TypeProjectSkeleton>({
+  content_type: "project"
+});
 
-for (const [path, imagePromise] of Object.entries(imported)) {
-  if (path.includes("miniatura")) {
-    continue;
+const projects = toProjects(entries)
+
+const imageData: [string, GetImageResult][] = []
+
+for (const project of projects) {
+  for (const still of project.stills) {
+    if (!still) {
+      continue;
+    }
+
+    const optimizedImage = await getImage({
+      src: `https:${still}`,
+      format: "avif",
+      width: 402,
+      inferSize: true
+    });
+
+    imageData.push([project.fullVideoUrl, optimizedImage]);
   }
-
-  const importedImage = await imagePromise();
-  const image = importedImage.default;
-  const optimizedImage = await getImage({
-    src: image,
-    format: "avif",
-    width: 402,
-  });
-
-  imageData.push([path, optimizedImage]);
 }
 ---
 
@@ -37,7 +45,7 @@ for (const [path, imagePromise] of Object.entries(imported)) {
   } from "../../store/animationStore";
   import gsap from "gsap";
   import ScrollSmoother from "gsap/ScrollSmoother";
-import { isMobile } from "react-device-detect";
+  import { isMobile } from "react-device-detect";
 
   const backdrop = document.getElementById("portfolio-details-modal-backdrop");
   const modal = document.getElementById("portfolio-details-modal");
@@ -158,7 +166,7 @@ import { isMobile } from "react-device-detect";
       </div>
       <StillsGrid
         client:only
-        imageData={imageData}
+        stills={imageData}
       />
     </div>
   </div>

@@ -15,23 +15,7 @@ interface Props {
 
 const { project } = Astro.props;
 
-const imported = import.meta.glob<{ default: ImageMetadata }>(
-  "/src/assets/projects/**/miniatura.{jpeg,jpg,png,gif}"
-);
-
-const getOptimizedThumbnail = async () => {
-  for (const [path, imagePromise] of Object.entries(imported)) {
-    if (!path.includes(project.thumbSrc)) {
-      continue;
-    }
-    
-    const importedImage = await imagePromise();
-    const image = importedImage.default;
-    return await getImage({ src: image, format: "avif", width: 920  });
-  }
-
-  return null;
-}
+const getOptimizedThumbnail = async () => await getImage({ src: project.thumbnail, format: "avif", width: 920, height: 518 });
 
 const optimizedThumbnail = (await getOptimizedThumbnail())!
 
@@ -92,7 +76,7 @@ const id = `card-a-${project.name.replace(" ", "")}`;
       <h4
         class="-mt-1 text-white text-sm md:text-xl  text-shadow-md text-shadow-black-500 font-[Chivo_Mono]"
       >
-        {project.clientName}
+        {project.client}
       </h4>
     </div>
 

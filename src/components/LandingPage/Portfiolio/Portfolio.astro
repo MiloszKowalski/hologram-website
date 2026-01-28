@@ -1,41 +1,81 @@
 ---
-import type { Project } from "../../../types/portfolio";
 import CardA from "./Cards/CardA.astro";
 import CardB from "./Cards/CardB.astro";
 import CardC from "./Cards/CardC.astro";
 
-export interface PortfolioProps {
-  projects: Project[];
-}
+import { contentfulClient } from "../../../lib/contentful";
+import { toProjects } from "../../../types/portfolio";
+import type { TypeActiveProjectOrderSkeleton } from "../../../types/TypeActiveProjectsOrder";
+import type { TypeProjectsOrderSkeleton } from "../../../types/TypeProjectsOrder";
+import type {
+  ProjectCollection,
+  TypeProjectSkeleton,
+} from "../../../types/TypeProject";
 
-const { projects } = Astro.props as PortfolioProps
+const entries: ProjectCollection =
+  await contentfulClient.withoutUnresolvableLinks.getEntries<TypeProjectSkeleton>(
+    {
+      content_type: "project",
+    },
+  );
+
+const order =
+  await contentfulClient.withoutUnresolvableLinks.getEntry<TypeActiveProjectOrderSkeleton>(
+    "4Fcgrygz89xCxjSlKZfFlv",
+  );
+
+const projectOrderId = order.fields.projectOrder!.sys.id;
+
+const projectOrder =
+  await contentfulClient.withoutUnresolvableLinks.getEntry<TypeProjectsOrderSkeleton>(
+    projectOrderId,
+  );
+
+const projects = toProjects(entries);
+
+projects.sort(
+  (a, b) =>
+    projectOrder!.fields.projects.findIndex(
+      (x) => x?.fields.fullVideoUrl === a.fullVideoUrl,
+    ) -
+    projectOrder!.fields.projects.findIndex(
+      (x) => x?.fields.fullVideoUrl === b.fullVideoUrl,
+    ),
+);
 ---
+
 <script>
-  var visibleProjects = 3
+  var visibleProjects = 3;
 
-  const seeMoreButton = document.getElementById("see-more-button")
-  seeMoreButton?.addEventListener('click', () => {
-    visibleProjects += 3
-      const projectsGrid = document.getElementById("projects-grid")
+  const seeMoreButton = document.getElementById("see-more-button");
+  seeMoreButton?.addEventListener("click", () => {
+    visibleProjects += 3;
+    const projectsGrid = document.getElementById("projects-grid");
 
-      projectsGrid!.style.gridTemplateRows = "1fr 1fr 1fr"
-  })
-
+    projectsGrid!.style.gridTemplateRows = "1fr 1fr 1fr";
+  });
 </script>
 <section class="p-4 md:p-0 -mt-8 md:mt-96">
-  <h2 class="text-white text-2xl font-bold text-center relative -top-12 md:-top-64">
+  <h2
+    class="text-white text-2xl font-bold text-center relative -top-12 md:-top-64"
+  >
     NASZE PROJEKTY
   </h2>
-  <div id="projects-grid" class="grid grid-cols-1 gap-20 md:gap-16 max-w-7xl mx-auto md:px-16">
-    {projects.map((project, index) => {
-      if (index % 3 === 0) {
-        return <CardA project={project} />
-      } else if (index % 3 === 1) {
-        return <CardB project={project} />
-      }
+  <div
+    id="projects-grid"
+    class="grid grid-cols-1 gap-20 md:gap-16 max-w-7xl mx-auto md:px-16"
+  >
+    {
+      projects.map((project, index) => {
+        if (index % 3 === 0) {
+          return <CardA project={project} />;
+        } else if (index % 3 === 1) {
+          return <CardB project={project} />;
+        }
 
-      return <CardC project={project} />
-    })}
+        return <CardC project={project} />;
+      })
+    }
   </div>
   <!-- <button id="see-more-button" class="mx-auto md:-mt-16 pt-3.5 font-safari-safe mt-36 text-md md:text-xl cursor-pointer text-white bg-[#2C67FF] rounded-xl px-8 py-2 font-bold hover:scale-110 hover:brightness-110 transition-all duration-250">
     ZOBACZ WIĘCEJ
