@@ -13,13 +13,13 @@ export interface Project {
 export const toProject = (
   contentfulProject: TypeProject<"WITHOUT_UNRESOLVABLE_LINKS", "en-US">,
 ): Project => ({
-  client: contentfulProject.fields.client,
-  director: contentfulProject.fields.director,
-  dop: contentfulProject.fields.dop,
+  client: contentfulProject.fields.client.replaceAll("\\n", "\n"),
+  director: contentfulProject.fields.director.replaceAll("\\n", "\n"),
+  dop: contentfulProject.fields.dop.replaceAll("\\n", "\n"),
   fullVideoUrl: contentfulProject.fields.fullVideoUrl,
-  name: contentfulProject.fields.name,
+  name: contentfulProject.fields.name.replaceAll("\\n", "\n"),
   thumbnail: contentfulProject.fields.thumbnail?.fields.file?.url ?? "",
-  stills: contentfulProject.fields.stills.map(
+  stills: contentfulProject.fields.stills?.map(
     (x) => x?.fields?.file?.url ?? "",
   ),
 });

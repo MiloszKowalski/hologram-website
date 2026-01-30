@@ -13,25 +13,9 @@ interface Props {
 
 const { project } = Astro.props;
 
-const imported = import.meta.glob<{ default: ImageMetadata }>(
-  "/src/assets/projects/**/miniatura.{jpeg,jpg,png,gif}"
-);
+const getOptimizedThumbnail = async () => await getImage({ src: project.thumbnail, format: "avif", width: 680, height: 382 });
 
-const getOptimizedThumbnail = async () => {
-  for (const [path, imagePromise] of Object.entries(imported)) {
-    if (!path.includes(project.thumbSrc)) {
-      continue;
-    }
-
-    const importedImage = await imagePromise();
-    const image = importedImage.default;
-    return await getImage({ src: image, format: "avif", width: 680 });
-  }
-
-  return null;
-};
-
-const optimizedThumbnail = (await getOptimizedThumbnail())!;
+const optimizedThumbnail = (await getOptimizedThumbnail())!
 
 const id = `card-c-${project.name.replace(" ", "")}`;
 ---
@@ -76,14 +60,14 @@ const id = `card-c-${project.name.replace(" ", "")}`;
       class="absolute w-4/5 top-[93%] text-shadow-lg text-white md:top-[97%] left-1/6 last:left-1/32 md:left-1/5 z-20"
     >
       <h3
-        class="my-0 text-xl md:text-2xl text-shadow-black-900 text-shadow-[3px_32px_0px_3px_black] font-bold"
+        class="my-0 text-xl md:text-2xl text-shadow-black-900 text-shadow-[3px_32px_0px_3px_black] font-bold whitespace-pre-line"
       >
         {project.name}
       </h3>
       <h4
-        class="-mt-1 text-sm md:text-base text-shadow-md text-shadow-black-500 font-[Chivo_Mono]"
+        class="-mt-1 text-sm md:text-base text-shadow-md text-shadow-black-500 font-[Chivo_Mono] whitespace-pre-line"
       >
-        {project.clientName}
+        {project.client}
       </h4>
     </div>
     <div
