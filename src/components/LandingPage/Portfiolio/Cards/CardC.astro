@@ -2,8 +2,9 @@
 import { getImage, Image } from "astro:assets";
 import type { Project } from "../../../../types/portfolio";
 import ThumbBg3Raw from "../../../../assets/thumb_bg_3.png";
-import BlueSpotlight from "../../../../assets/blue_spotlight.png";
 import { projects } from "../projects";
+import BlueEllipse from "../../../../assets/blue_ellipse.png";
+import PinkEllipse from "../../../../assets/pink_ellipse.png";
 
 const ThumbBg3 = await getImage({ src: ThumbBg3Raw, format: "avif" });
 
@@ -13,9 +14,15 @@ interface Props {
 
 const { project } = Astro.props;
 
-const getOptimizedThumbnail = async () => await getImage({ src: project.thumbnail, format: "avif", width: 680, height: 382 });
+const getOptimizedThumbnail = async () =>
+  await getImage({
+    src: project.thumbnail,
+    format: "avif",
+    width: 680,
+    height: 382,
+  });
 
-const optimizedThumbnail = (await getOptimizedThumbnail())!
+const optimizedThumbnail = (await getOptimizedThumbnail())!;
 
 const id = `card-c-${project.name.replace(" ", "")}`;
 ---
@@ -34,18 +41,34 @@ const id = `card-c-${project.name.replace(" ", "")}`;
 
   customElements.define("card-c", CardC);
 </script>
-<card-c id={id} data-project={JSON.stringify(project)} class="relative">
+<card-c
+  id={id}
+  data-project={JSON.stringify(project)}
+  class="relative -top-8 md:top-24"
+>
   {
-      (projects.findIndex((x) => x.name === project.name) - 2) % 15 === 0 && (
-        <Image
-          src={BlueSpotlight}
-          alt=""
-          class="opacity-25 absolute md:-left-1/3 -top-5/3 md:-top-5/2 rotate-150 md:rotate-112 scale-125 md:-z-1"
-          format="avif"
-          loading="lazy"
-        />
-      )
-    }
+    (projects.findIndex((x) => x.name === project.name) - 5) % 15 === 0 && (
+      <Image
+        src={BlueEllipse}
+        alt=""
+        class="opacity-25 absolute -top-1/4 md:-top-36 scale-125 -z-1"
+        format="avif"
+        loading="lazy"
+      />
+    )
+  }
+  {
+    (projects.findIndex((x) => x.name === project.name) - 14) % 15 === 0 && (
+      <Image
+        src={PinkEllipse}
+        alt=""
+        class="opacity-25 absolute -top-1/4 md:-top-36 scale-125 -z-1"
+        format="avif"
+        loading="lazy"
+      />
+    )
+  }
+
   <article
     data-speed="1"
     style={{
@@ -54,8 +77,6 @@ const id = `card-c-${project.name.replace(" ", "")}`;
     }}
     class="my-4 md:my-0 cursor-pointer p-4 group mr-auto rounded-2xl w-19/20 mx-auto md:mx-0 md:w-1/2 h-auto relative md:-top-64 z-9"
   >
-    
-
     <div
       class="absolute w-4/5 top-[93%] text-shadow-lg text-white md:top-[97%] left-1/6 last:left-1/32 md:left-1/5 z-20"
     >

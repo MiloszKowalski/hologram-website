@@ -7,16 +7,21 @@ import { getImage } from "astro:assets";
 import { contentfulClient } from "../../../../lib/contentful";
 import { toProjects } from "../../../../types/portfolio";
 import type { GetImageResult } from "astro";
-import type { ProjectCollection, TypeProjectSkeleton } from "../../../../types/TypeProject";
+import type {
+  ProjectCollection,
+  TypeProjectSkeleton,
+} from "../../../../types/TypeProject";
 
+const entries: ProjectCollection =
+  await contentfulClient.withoutUnresolvableLinks.getEntries<TypeProjectSkeleton>(
+    {
+      content_type: "project",
+    },
+  );
 
-const entries: ProjectCollection = await contentfulClient.withoutUnresolvableLinks.getEntries<TypeProjectSkeleton>({
-  content_type: "project"
-});
+const projects = toProjects(entries);
 
-const projects = toProjects(entries)
-
-const imageData: [string, GetImageResult][] = []
+const imageData: [string, GetImageResult][] = [];
 
 for (const project of projects) {
   for (const still of project.stills) {
@@ -28,7 +33,7 @@ for (const project of projects) {
       src: `https:${still}`,
       format: "avif",
       width: 402,
-      inferSize: true
+      inferSize: true,
     });
 
     imageData.push([project.fullVideoUrl, optimizedImage]);
@@ -65,7 +70,7 @@ for (const project of projects) {
         opacity: 1,
         filter: isMobile ? "none" : "blur(0px)",
         duration: 0.5,
-      }
+      },
     )
     .pause();
 
@@ -85,7 +90,7 @@ for (const project of projects) {
         filter: "blur(0px)",
         scale: 1,
         duration: 0.5,
-      }
+      },
     )
     .pause();
 
@@ -106,7 +111,7 @@ for (const project of projects) {
       backdropTween.reverse();
       modalTween.reverse();
       scrollSmoother?.paused(false);
-      scrollSmoother?.normalizer?.disable()
+      scrollSmoother?.normalizer?.disable();
     }
   });
 
@@ -164,10 +169,7 @@ for (const project of projects) {
         <ProjectInfo client:only />
         <SeeTheWholeThingButton client:only />
       </div>
-      <StillsGrid
-        client:only
-        stills={imageData}
-      />
+      <StillsGrid client:only stills={imageData} />
     </div>
   </div>
 </div>

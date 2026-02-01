@@ -1,5 +1,5 @@
 <script>
-import {
+  import {
     canRotateUsingPointer,
     isIntroFinished,
     isMenuExpanded,
@@ -10,8 +10,7 @@ import {
   } from "../../store/animationStore";
   import gsap from "gsap";
   import { ScrollSmoother } from "gsap/ScrollSmoother";
-import { isMobile } from "react-device-detect";
-
+  import { isMobile } from "react-device-detect";
 
   const toggleMenu = () => {
     isMenuExpanded.set(!isMenuExpanded.get());
@@ -30,7 +29,7 @@ import { isMobile } from "react-device-detect";
           visibility: "visible",
           transform: "translate(-50%, 0%)",
           duration: 0.5,
-        }
+        },
       )
       .fromTo(
         "#mobile-menu-shadow",
@@ -45,7 +44,7 @@ import { isMobile } from "react-device-detect";
           transform: "translate(0, 0)",
           duration: 0.5,
         },
-        "<"
+        "<",
       )
       .fromTo(
         ".mobile-nav-link",
@@ -62,7 +61,7 @@ import { isMobile } from "react-device-detect";
             ease: "power2.inOut",
           },
         },
-        "<"
+        "<",
       )
       .pause();
 
@@ -74,7 +73,11 @@ import { isMobile } from "react-device-detect";
     }
   };
 
-  const mobileGoTo = (selector: string | number, position?: string, onComplete?: () => void) => {
+  const mobileGoTo = (
+    selector: string | number,
+    position?: string,
+    onComplete?: () => void,
+  ) => {
     toggleMenu();
 
     canRotateUsingPointer.set(false);
@@ -107,29 +110,31 @@ import { isMobile } from "react-device-detect";
 
   isMenuExpanded.subscribe((isExpanded) => {
     if (!isMobile || !isIntroFinished.get()) {
-      return
+      return;
     }
 
     const hamburger = document.getElementById("hamburger");
     const shadow = document.getElementById("mobile-menu-shadow");
 
     if (isExpanded) {
-      ScrollSmoother.get()?.paused(true)
+      ScrollSmoother.get()?.paused(true);
       hamburger?.classList.add("opened");
       shadow?.classList.add("pointer-events-auto");
     } else {
-      ScrollSmoother.get()?.paused(false)
+      ScrollSmoother.get()?.paused(false);
       hamburger?.classList.remove("opened");
       shadow?.classList.remove("pointer-events-auto");
     }
   });
 
   document.getElementById("hamburger")!.onclick = toggleMenu;
-  
+
   document.getElementById("hamburger")!.onclick = toggleMenu;
 
-  document.getElementById("mobile-showreel-button")!.onclick = () => 
-    mobileGoTo(showreelPosition.get(), "top top", () => isShowreelPlayerVisible.set(true));
+  document.getElementById("mobile-showreel-button")!.onclick = () =>
+    mobileGoTo(showreelPosition.get(), "top top", () =>
+      isShowreelPlayerVisible.set(true),
+    );
 
   document.getElementById("mobile-portfolio-button")!.onclick = () =>
     mobileGoTo("#welcome");

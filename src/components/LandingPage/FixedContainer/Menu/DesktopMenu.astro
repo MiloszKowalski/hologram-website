@@ -21,7 +21,7 @@ const Logo = await getImage({
   import ScrollTrigger from "gsap/ScrollTrigger";
   import ScrollSmoother from "gsap/ScrollSmoother";
   import { gsap } from "gsap";
-  import throttle from "lodash.throttle"
+  import throttle from "lodash.throttle";
 
   const showDesktopNavBar = () => {
     isMenuVisible.set(!isMobile);
@@ -31,14 +31,13 @@ const Logo = await getImage({
     isMenuVisible.set(isMobile);
   };
 
-
   ScrollTrigger.observe({
     onChangeY: (observer) => {
       if (isMenuExpanded.get()) {
-        return
+        return;
       }
 
-      const shouldShowNavBar = observer.deltaY < 0
+      const shouldShowNavBar = observer.deltaY < 0;
       if (shouldShowNavBar) {
         showDesktopNavBar();
       } else {
@@ -47,27 +46,27 @@ const Logo = await getImage({
     },
     lockAxis: true,
     dragMinimum: 0,
-    tolerance: 0
+    tolerance: 0,
   });
 
-  var welcomeOffset = 0
+  var welcomeOffset = 0;
 
   showreelPosition.subscribe(() => {
-    welcomeOffset = ScrollSmoother.get()?.offset('#welcome', 'top top') ?? 0
-  })
+    welcomeOffset = ScrollSmoother.get()?.offset("#welcome", "top top") ?? 0;
+  });
 
   ScrollTrigger.observe({
     onChangeY: throttle((observer) => {
-      const isInView = observer.scrollY() < welcomeOffset
+      const isInView = observer.scrollY() < welcomeOffset;
 
       if (isInView === isSceneInView.get()) {
-        return
+        return;
       }
 
-      if(isInView) {
-        isSceneInView.set(true)
+      if (isInView) {
+        isSceneInView.set(true);
       } else {
-        isSceneInView.set(false)
+        isSceneInView.set(false);
       }
 
       const normalizer = ScrollSmoother.get()?.normalizer;
@@ -85,7 +84,7 @@ const Logo = await getImage({
     lockAxis: true,
     dragMinimum: 0,
     tolerance: 0,
-    type: "scroll,touch"
+    type: "scroll,touch",
   });
 
   const desktopNavBar = document.getElementById("desktopNavBar");
@@ -99,7 +98,7 @@ const Logo = await getImage({
       opacity: 1,
       ease: "power2.inOut",
       paused: true,
-    }
+    },
   );
 
   const navLinksAnimation = gsap.fromTo(
@@ -116,7 +115,7 @@ const Logo = await getImage({
         axis: "x",
       },
       paused: true,
-    }
+    },
   );
 
   const menuAnimation = isMobile ? hamburgerAnimation : navLinksAnimation;
@@ -129,7 +128,7 @@ const Logo = await getImage({
       opacity: 1,
       ease: "power2.inOut",
       paused: true,
-    }
+    },
   );
 
   const backdropAnimation = gsap.fromTo(
@@ -139,7 +138,7 @@ const Logo = await getImage({
       opacity: 1,
       ease: "power2.inOut",
       paused: true,
-    }
+    },
   );
 
   isMenuVisible.subscribe((isVisible) => {
@@ -156,15 +155,14 @@ const Logo = await getImage({
 
   const desktopGoTo = (selector: string | number, position?: string) => {
     const scrollSmoother = ScrollSmoother.get();
-    
+
     scrollSmoother?.paused(false);
-    
+
     if (isSceneInView.get()) {
-      scrollSmoother?.refresh(true)
+      scrollSmoother?.refresh(true);
     }
-    
-    setTimeout(() => scrollSmoother?.scrollTo(selector, true, position), 50)
-    ;
+
+    setTimeout(() => scrollSmoother?.scrollTo(selector, true, position), 50);
 
     // // For now every menu element scrolls beyond the interactive 3D scene
     // canRotateUsingPointer.set(false)
@@ -172,8 +170,8 @@ const Logo = await getImage({
 
   document.getElementById("showreel-button")!.onclick = () => {
     desktopGoTo(showreelPosition.get());
-    isShowreelPlayerVisible.set(true)
-  }
+    isShowreelPlayerVisible.set(true);
+  };
 
   document.getElementById("portfolio-button")!.onclick = () =>
     desktopGoTo("#welcome", "65% center");

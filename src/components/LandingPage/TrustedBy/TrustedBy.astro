@@ -1,18 +1,34 @@
 ---
-import { getImage, Image } from "astro:assets";
+import { getImage } from "astro:assets";
 import EmblaCarousel from "./Carousel/EmblaCarousel.astro";
 
 import AsusTekLogoRaw from "../../../assets/clients/AsusTek-black-logo.png";
-const AsusTekLogo = await getImage({ src: AsusTekLogoRaw, format: "png", width: 135 });
+const AsusTekLogo = await getImage({
+  src: AsusTekLogoRaw,
+  format: "png",
+  width: 135,
+});
 
 import BailaEllaRaw from "../../../assets/clients/baila_ella.png";
-const BailaElla = await getImage({ src: BailaEllaRaw, format: "png", width: 156 });
+const BailaElla = await getImage({
+  src: BailaEllaRaw,
+  format: "png",
+  width: 156,
+});
 
 import TwentyTwentyRaw from "../../../assets/clients/2020.png";
-const TwentyTwenty = await getImage({ src: TwentyTwentyRaw, format: "png", width: 64 });
+const TwentyTwenty = await getImage({
+  src: TwentyTwentyRaw,
+  format: "png",
+  width: 64,
+});
 
 import ContinentalRaw from "../../../assets/clients/Continental-logo-logotype.png";
-const Continental = await getImage({ src: ContinentalRaw, format: "png", width: 204 });
+const Continental = await getImage({
+  src: ContinentalRaw,
+  format: "png",
+  width: 204,
+});
 
 import InfaktRaw from "../../../assets/clients/infakt-logo.png";
 const Infakt = await getImage({ src: InfaktRaw, format: "png", width: 123 });
@@ -27,13 +43,21 @@ import NetflixRaw from "../../../assets/clients/netflix.png";
 const Netflix = await getImage({ src: NetflixRaw, format: "png", width: 148 });
 
 import MicrosoftRaw from "../../../assets/clients/microsoft.png";
-const Microsoft = await getImage({ src: MicrosoftRaw, format: "png", width: 173 });
+const Microsoft = await getImage({
+  src: MicrosoftRaw,
+  format: "png",
+  width: 173,
+});
 
 import PolsatRaw from "../../../assets/clients/Polsat_2021_gradient.png";
 const Polsat = await getImage({ src: PolsatRaw, format: "png", width: 47 });
 
 import SonyMusicRaw from "../../../assets/clients/sony music.png";
-const SonyMusic = await getImage({ src: SonyMusicRaw, format: "png", width: 186 });
+const SonyMusic = await getImage({
+  src: SonyMusicRaw,
+  format: "png",
+  width: 186,
+});
 
 import TvnWbRaw from "../../../assets/clients/TVN WB.png";
 const TvnWb = await getImage({ src: TvnWbRaw, format: "png", width: 145 });
@@ -43,13 +67,9 @@ const Warner = await getImage({ src: WarnerRaw, format: "png", width: 138 });
 
 import XKomRaw from "../../../assets/clients/x-kom_the_seller_logo-2048x1365.png";
 const XKom = await getImage({ src: XKomRaw, format: "png", width: 122 });
-
-import Ellipse from "../../../assets/pink_ellipse.png";
 ---
+
 <section class="mt-40 md:mt-24 relative">
-  <div class="mx-auto opacity-25 absolute left-1/2 -translate-x-1/2 -top-8/3 md:-top-7/2 md:-z-1 scale-250 md:scale-100">
-    <Image src={Ellipse} alt="" loading="lazy"  />
-  </div>
   <h2 class="text-3xl mt-0 font-bold text-white text-center">KLIENCI</h2>
   <EmblaCarousel
     slides={[

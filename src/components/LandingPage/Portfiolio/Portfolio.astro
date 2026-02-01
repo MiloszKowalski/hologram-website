@@ -11,6 +11,7 @@ import type {
   ProjectCollection,
   TypeProjectSkeleton,
 } from "../../../types/TypeProject";
+import { chunkArray } from "../../../lib/chunkArray";
 
 const entries: ProjectCollection =
   await contentfulClient.withoutUnresolvableLinks.getEntries<TypeProjectSkeleton>(
@@ -42,42 +43,108 @@ projects.sort(
       (x) => x?.fields.fullVideoUrl === b.fullVideoUrl,
     ),
 );
+
+const projectSegments = chunkArray(projects, 3);
 ---
 
 <script>
-  var visibleProjects = 3;
+  import { gsap } from "gsap";
+  import { ScrollSmoother } from "gsap/ScrollSmoother";
+  import { isSceneInView } from "../store/animationStore";
+  import { isMobile } from "react-device-detect";
+  var visibleSegments = 1;
+  const projectsGrids = document.querySelectorAll(".projects-grid");
+
+  projectsGrids[0]!.classList.remove("grid-rows-[0fr]");
+  projectsGrids[0]!.classList.add("grid-rows-[1fr]");
 
   const seeMoreButton = document.getElementById("see-more-button");
   seeMoreButton?.addEventListener("click", () => {
-    visibleProjects += 3;
-    const projectsGrid = document.getElementById("projects-grid");
+    const projectsGrids = document.querySelectorAll(".projects-grid");
 
-    projectsGrid!.style.gridTemplateRows = "1fr 1fr 1fr";
+    const segment = projectsGrids[visibleSegments]!;
+
+    segment.classList.remove("grid-rows-[0fr]");
+    segment.classList.add("grid-rows-[1fr]");
+
+    ScrollSmoother.refresh(true);
+
+    if (isMobile) {
+      const curr = { x: ScrollSmoother.get()?.scrollTop() ?? 0 };
+
+      gsap.to(curr, {
+        x: ScrollSmoother.get()?.offset(segment) ?? curr.x,
+        onUpdate: () => {
+          ScrollSmoother.get()?.scrollTop(curr.x);
+        },
+        duration: 0.5,
+      });
+    } else {
+      ScrollSmoother.get()?.scrollTo(segment, true, "top-=30px");
+    }
+
+    visibleSegments += 1;
+
+    if (visibleSegments === projectsGrids.length) {
+      seeMoreButton.classList.remove("opacity-100");
+      seeMoreButton.classList.add("opacity-0");
+    }
+  });
+
+  isSceneInView.subscribe((shouldHideProjects) => {
+    if (shouldHideProjects) {
+      const projectsGrids = document.querySelectorAll(".projects-grid");
+      const expanded = Array.from(projectsGrids).toSpliced(0, 1);
+
+      for (const grid of expanded) {
+        grid.classList.remove("grid-rows-[1fr]");
+        grid.classList.add("grid-rows-[0fr]");
+      }
+
+      seeMoreButton!.classList.remove("opacity-0");
+      seeMoreButton!.classList.add("opacity-100");
+
+      visibleSegments = 1;
+    }
+    ScrollSmoother.refresh();
   });
 </script>
-<section class="p-4 md:p-0 -mt-8 md:mt-96">
+<section class="p-0 -mt-8 md:mt-24">
   <h2
     class="text-white text-2xl font-bold text-center relative -top-12 md:-top-64"
   >
     NASZE PROJEKTY
   </h2>
-  <div
-    id="projects-grid"
-    class="grid grid-cols-1 gap-20 md:gap-16 max-w-7xl mx-auto md:px-16"
-  >
+  <div id="project-segments" class="md:-mt-56">
     {
-      projects.map((project, index) => {
-        if (index % 3 === 0) {
-          return <CardA project={project} />;
-        } else if (index % 3 === 1) {
-          return <CardB project={project} />;
-        }
+      projectSegments.map((segment, segmentIndex) => (
+        <div
+          class="grid grid-rows-[0fr] projects-grid"
+          style={{ transition: "grid-template-rows 500ms" }}
+          data-segment={segmentIndex}
+        >
+          <div class="overflow-hidden">
+            <div class="flex flex-col p-4 md:p-0 gap-20 md:gap-16 max-w-7xl mx-auto">
+              {segment.map((project, index) => {
+                if (index % 3 === 0) {
+                  return <CardA project={project} />;
+                } else if (index % 3 === 1) {
+                  return <CardB project={project} />;
+                }
 
-        return <CardC project={project} />;
-      })
+                return <CardC project={project} />;
+              })}
+            </div>
+          </div>
+        </div>
+      ))
     }
   </div>
-  <!-- <button id="see-more-button" class="mx-auto md:-mt-16 pt-3.5 font-safari-safe mt-36 text-md md:text-xl cursor-pointer text-white bg-[#2C67FF] rounded-xl px-8 py-2 font-bold hover:scale-110 hover:brightness-110 transition-all duration-250">
+
+  <button
+    id="see-more-button"
+    class="block relative md:-top-36 -top-24 mx-auto -mb-36 md:my-24 pt-3.5 font-safari-safe mt-36 text-md md:text-xl cursor-pointer text-white bg-[#2C67FF] rounded-xl px-8 py-2 font-bold hover:scale-110 hover:brightness-110 transition-all duration-250"
+  >
     ZOBACZ WIĘCEJ
-  </button> -->
+  </button>
 </section>
