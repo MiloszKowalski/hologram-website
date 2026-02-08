@@ -80,14 +80,14 @@
   ) => {
     toggleMenu();
 
-    canRotateUsingPointer.set(false);
-
     if (isSceneInView.get()) {
       ScrollSmoother.get()?.refresh(true);
     }
 
     setTimeout(() => {
       isMenuVisible.set(false);
+      canRotateUsingPointer.set(false);
+
       const target =
         typeof selector === "string"
           ? (ScrollSmoother.get()?.offset(selector, position) ?? 0)

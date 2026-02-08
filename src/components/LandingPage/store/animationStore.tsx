@@ -30,3 +30,10 @@ export const isSceneInView = atom(true);
 export const isMenuExpanded = atom(false);
 
 export const isShowreelPlayerVisible = atom(false);
+
+export const areButtonsVisible = atom(false);
+
+export const splitTextInstances = new Set<{
+  name: string;
+  x: globalThis.SplitText;
+}>();

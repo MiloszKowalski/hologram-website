@@ -9,6 +9,9 @@ import svgr from "vite-plugin-svgr";
 // https://astro.build/config
 export default defineConfig({
   vite: {
+    build: {
+      sourcemap: true,
+    },
     plugins: [
       tailwindcss(),
       svgr({

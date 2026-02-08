@@ -34,6 +34,8 @@ import {
   isLoading,
   currentDpr,
   isShowreelPlayerVisible,
+  isMenuExpanded,
+  areButtonsVisible,
 } from "../store/animationStore";
 import { useLevaConfig } from "./hooks/useLevaConfig";
 import { useOrientationControls } from "./hooks/useOrientationControls";
@@ -139,10 +141,15 @@ export default function Scene({ gltf, inView }: SceneProps) {
       if (s.progress <= 0.1) {
         if (!canRotateUsingPointer.get()) {
           canRotateUsingPointer.set(true);
+          areButtonsVisible.set(true);
         }
       } else {
         if (canRotateUsingPointer.get()) {
           canRotateUsingPointer.set(false);
+        }
+
+        if (areButtonsVisible.get()) {
+          areButtonsVisible.set(false);
         }
       }
 
@@ -170,7 +177,6 @@ export default function Scene({ gltf, inView }: SceneProps) {
           pin: "#hero",
           start: "top top",
           end: "+=2500px",
-          //markers: true,
           scrub: 0,
           snap: {
             snapTo: "labelsDirectional",

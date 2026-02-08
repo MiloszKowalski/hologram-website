@@ -2,28 +2,44 @@
 import { getImage } from "astro:assets";
 import Bio from "./Bio/Bio.astro";
 
-import WilkuRaw from "../../../assets/wilku.png"
-const Wilku = await getImage({ src: WilkuRaw, format: "webp", width: 265 })
+import WilkuRaw from "../../../assets/wilku.png";
+const Wilku = await getImage({ src: WilkuRaw, format: "webp", width: 265 });
 
-import AgataRaw from "../../../assets/agata.jpeg"
-const Agata = await getImage({ src: AgataRaw, format: "webp", width: 265 })
+import AgataRaw from "../../../assets/agata.png";
+const Agata = await getImage({ src: AgataRaw, format: "webp", width: 265 });
+
+import OchnioRaw from "../../../assets/ochnio.png";
+import SmallBio from "./Bio/SmallBio.astro";
+const Ochnio = await getImage({ src: OchnioRaw, format: "webp", width: 265 });
 ---
-<section id="about" class="mt-32 md:mt-48">
+
+<section id="about" class="mt-32 md:mt-48 flex flex-col items-center pb-48">
   <h1 class="text-4xl text-center text-white font-bold">O NAS</h1>
-  <div class="flex flex-col md:flex-row justify-center gap-12 md:gap-28 pb-48 mt-16">
+  <div
+    class="flex flex-col md:flex-row justify-center gap-12 md:gap-28 md:pb-16 mt-16"
+  >
     <Bio
       name={`TOMEK\nWILCZYŃSKI`}
       description={`Reżyser fabularno-reklamowy nagradzanych produkcji. Jego film “Dziewczyna z walizką” został zaprezentowany na 77. Festiwalu Filmowym w Cannes. Laureat nagrody Grand Video Awards za performance #MATA2040 i dwukrotny zwycięzca 48 Hour Film Project. Nominowany do nagrody KTR za głośną kampanię “Nie widzę przeszkód” o niewidomych. Pomysłodawca i założyciel Studio Hologram.`}
       imgSrc={Wilku.src}
-      class:list="contrast-200"
+      filter="contrast(1) brightness(1)"
     />
     <div class="relative top-8 md:top-24">
       <Bio
         name={`AGATA\nZAMĘCKA-PIECHAL`}
-        description={`Producentka, która zmienia pomysły w rzeczywistość. Postawi każdy plan - od prostych nagrań po wysokobudżetowe reklamy. Współpracowała z czołowymi markami i agencjami. Jej bogate portfolio obejmuje szeroki zakres projektów, od teledysków po międzynarodowe produkcje. Wcześniej dziennikarka telewizyjna stacji TVN. Absolwentka UAM na kierunku nowe media.`}
+        description={`Producentka, która zmienia pomysły w rzeczywistość. Postawi każdy plan - od prostych nagrań po wysokobudżetowe reklamy. Współpracowała z czołowymi markami i agencjami. Jej bogate portfolio obejmuje szeroki zakres projektów, od teledysków po shorty fabularne. Wcześniej dziennikarka telewizyjna stacji TVN. Absolwentka UAM na kierunku nowe media. Współwłaścicielka Studio Hologram.`}
         imgSrc={Agata.src}
         left="-left-2 md:left-8"
+        filter="contrast(0.9) brightness(1.1)"
       />
     </div>
+  </div>
+  <div class="mt-28 md:mt-0 flex flex-col items-center relative -left-3 -top-4">
+    <SmallBio
+      name={`E. A.\nOCHNIO`}
+      description={`Kierowniczka produkcji z wieloletnim doświadczeniem w międzynarodowych produkcjach.`}
+      imgSrc={Ochnio.src}
+      filter="contrast(0.89) brightness(1.15)"
+    />
   </div>
 </section>

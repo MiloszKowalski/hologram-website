@@ -5,9 +5,10 @@ import ArrowRight from "../../../assets/arrow-right.svg";
 ---
 
 <script>
-  import { atom } from "nanostores";
   import {
+    areButtonsVisible,
     canRotateUsingPointer,
+    isIntroFinished,
     isMenuExpanded,
     isSceneInView,
     isShowreelPlayerVisible,
@@ -16,17 +17,17 @@ import ArrowRight from "../../../assets/arrow-right.svg";
   import { gsap } from "gsap";
   import { ScrollSmoother } from "gsap/ScrollSmoother";
 
-  const areButtonsVisible = atom(false);
-
-  canRotateUsingPointer.subscribe(async (canRotate) => {
-    areButtonsVisible.set(canRotate);
-  });
-
   isMenuExpanded.subscribe(async (isExpanded) => {
     if (isExpanded) {
       areButtonsVisible.set(false);
     } else if (canRotateUsingPointer.get()) {
       areButtonsVisible.set(true);
+    }
+  });
+
+  isIntroFinished.subscribe((isFinished) => {
+    if (isFinished) {
+      areButtonsVisible.set(!isMenuExpanded.get());
     }
   });
 

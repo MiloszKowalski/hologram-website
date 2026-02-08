@@ -50,7 +50,7 @@ const projectSegments = chunkArray(projects, 3);
 <script>
   import { gsap } from "gsap";
   import { ScrollSmoother } from "gsap/ScrollSmoother";
-  import { isSceneInView } from "../store/animationStore";
+  import { isSceneInView, splitTextInstances } from "../store/animationStore";
   import { isMobile } from "react-device-detect";
   var visibleSegments = 1;
   const projectsGrids = document.querySelectorAll(".projects-grid");
@@ -89,6 +89,35 @@ const projectSegments = chunkArray(projects, 3);
       seeMoreButton.classList.remove("opacity-100");
       seeMoreButton.classList.add("opacity-0");
     }
+
+    setTimeout(
+      () =>
+        splitTextInstances.values().forEach(({ name, x }) => {
+          x.revert();
+          x.split({
+            type: "lines",
+            mask: "lines",
+            aria: "none",
+            linesClass: "bio-line",
+            onSplit: (self) => {
+              return gsap.from(self.lines, {
+                y: 100,
+                opacity: 0,
+                stagger: 0.1,
+                duration: 0.75,
+                scrollTrigger: {
+                  trigger: `#bio-${name}`,
+                  start: isMobile ? "top center" : "top-=600",
+                  end: isMobile ? "bottom center+=200" : "top-=200",
+                  scrub: 1.25,
+                  pin: false,
+                },
+              });
+            },
+          });
+        }),
+      1000,
+    );
   });
 
   isSceneInView.subscribe((shouldHideProjects) => {

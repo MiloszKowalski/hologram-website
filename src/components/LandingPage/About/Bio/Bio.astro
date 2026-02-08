@@ -3,18 +3,20 @@ interface Props {
   imgSrc: string;
   name: string;
   description: string;
+  filter: string;
   left?: string;
 }
 
-const { name, imgSrc, description, left } = Astro.props;
+const { name, imgSrc, description, left, filter } = Astro.props;
 
-const nameWithoutSpaces = name.replaceAll("\n", "");
+const nameWithoutSpaces = name.replaceAll("\n", "").replaceAll(" ", "");
 ---
 
 <script>
   import SplitText from "gsap/SplitText";
   import { isMobile } from "react-device-detect";
-  import { gsap } from "gsap"
+  import { gsap } from "gsap";
+  import { splitTextInstances } from "../../store/animationStore";
 
   setTimeout(() => {
     const bioText = document.querySelectorAll("div[id*='bio-text-']");
@@ -22,7 +24,7 @@ const nameWithoutSpaces = name.replaceAll("\n", "");
     for (const text of bioText) {
       const nameWithoutSpaces = text.id.replace("bio-text-", "");
 
-      SplitText.create(`#bio-text-${nameWithoutSpaces}`, {
+      const split = SplitText.create(`#bio-text-${nameWithoutSpaces}`, {
         type: "lines",
         autoSplit: true,
         mask: "lines",
@@ -39,21 +41,28 @@ const nameWithoutSpaces = name.replaceAll("\n", "");
               start: isMobile ? "top center" : "top-=600",
               end: isMobile ? "bottom center+=200" : "top-=200",
               scrub: 1.25,
-              //markers: true,
               pin: false,
             },
           });
         },
       });
+
+      splitTextInstances.add({ name: nameWithoutSpaces, x: split });
     }
-  }, 250)
+  }, 250);
 </script>
 
 <article
   id={`bio-${nameWithoutSpaces}`}
   class="md:w-[45ch] flex flex-col items-center p-8"
 >
-  <img class="rounded-full w-3/5" src={imgSrc} alt="" loading="lazy" />
+  <img
+    class=`rounded-full w-3/5`
+    style=`filter: ${filter}`
+    src={imgSrc}
+    alt=""
+    loading="lazy"
+  />
   <h2
     class={`text-white text-2xl font-[Aktiv_Grotesk_Ex] font-extrabold whitespace-pre-line relative -top-8 ${
       !left && "-left-8"
@@ -63,7 +72,7 @@ const nameWithoutSpaces = name.replaceAll("\n", "");
   </h2>
   <div id={`bio-text-${nameWithoutSpaces}`} class="relative md:left-8">
     <p
-      class="font-[Chivo_Mono] text-white md:w-[35ch] whitespace-pre-line text-sm text-justify"
+      class="font-[Chivo_Mono] text-white md:w-[35ch] whitespace-pre-line text-sm"
     >
       {description}
     </p>
