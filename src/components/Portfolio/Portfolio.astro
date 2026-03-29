@@ -1,57 +1,23 @@
 ---
+import type { Project } from "../../types/portfolio";
 import CardA from "./Cards/CardA.astro";
 import CardB from "./Cards/CardB.astro";
 import CardC from "./Cards/CardC.astro";
 
-import { contentfulClient } from "../../../lib/contentful";
-import { toProjects } from "../../../types/portfolio";
-import type { TypeActiveProjectOrderSkeleton } from "../../../types/TypeActiveProjectsOrder";
-import type { TypeProjectsOrderSkeleton } from "../../../types/TypeProjectsOrder";
-import type {
-  ProjectCollection,
-  TypeProjectSkeleton,
-} from "../../../types/TypeProject";
-import { chunkArray } from "../../../lib/chunkArray";
+interface Props {
+  header: string,
+  projectSegments: Project[][]
+}
 
-const entries: ProjectCollection =
-  await contentfulClient.withoutUnresolvableLinks.getEntries<TypeProjectSkeleton>(
-    {
-      content_type: "project",
-    },
-  );
-
-const order =
-  await contentfulClient.withoutUnresolvableLinks.getEntry<TypeActiveProjectOrderSkeleton>(
-    "4Fcgrygz89xCxjSlKZfFlv",
-  );
-
-const projectOrderId = order.fields.projectOrder!.sys.id;
-
-const projectOrder =
-  await contentfulClient.withoutUnresolvableLinks.getEntry<TypeProjectsOrderSkeleton>(
-    projectOrderId,
-  );
-
-const projects = toProjects(entries);
-
-projects.sort(
-  (a, b) =>
-    projectOrder!.fields.projects.findIndex(
-      (x) => x?.fields.fullVideoUrl === a.fullVideoUrl,
-    ) -
-    projectOrder!.fields.projects.findIndex(
-      (x) => x?.fields.fullVideoUrl === b.fullVideoUrl,
-    ),
-);
-
-const projectSegments = chunkArray(projects, 3);
+const { projectSegments, header } = Astro.props
 ---
 
 <script>
   import { gsap } from "gsap";
   import { ScrollSmoother } from "gsap/ScrollSmoother";
-  import { isSceneInView, splitTextInstances } from "../store/animationStore";
   import { isMobile } from "react-device-detect";
+  import { splitTextInstances } from "../../store/globalStore";
+import { shouldContractPortfolio } from "../../store/portfolioStore";
   var visibleSegments = 1;
   const projectsGrids = document.querySelectorAll(".projects-grid");
 
@@ -120,7 +86,7 @@ const projectSegments = chunkArray(projects, 3);
     );
   });
 
-  isSceneInView.subscribe((shouldHideProjects) => {
+  shouldContractPortfolio.subscribe((shouldHideProjects) => {
     if (shouldHideProjects) {
       const projectsGrids = document.querySelectorAll(".projects-grid");
       const expanded = Array.from(projectsGrids).toSpliced(0, 1);
@@ -142,7 +108,7 @@ const projectSegments = chunkArray(projects, 3);
   <h2
     class="text-white text-2xl font-bold text-center relative -top-12 md:-top-64"
   >
-    NASZE PROJEKTY
+    {header}
   </h2>
   <div id="project-segments" class="md:-mt-56">
     {
@@ -156,13 +122,15 @@ const projectSegments = chunkArray(projects, 3);
             <div class="flex flex-col p-4 md:p-0 gap-20 md:gap-16 max-w-7xl mx-auto">
               {segment.map((project, index) => {
                 if (index % 3 === 0) {
-                  return <CardA project={project} />;
+                  return <CardA project={project} projectIndex={segmentIndex * 3 + index} />;
                 } else if (index % 3 === 1) {
-                  return <CardB project={project} />;
+                  return <CardB project={project} projectIndex={segmentIndex * 3 + index} />;
                 }
 
-                return <CardC project={project} />;
+                return <CardC project={project} projectIndex={segmentIndex * 3 + index} />;
               })}
+              {segment.length === 1 && <div class="hidden md:block opacity-0 invisible pointer-events-none h-32"></div>}
+              {segment.length === 2 && <div class="hidden md:block opacity-0 invisible pointer-events-none h-40"></div>}
             </div>
           </div>
         </div>

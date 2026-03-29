@@ -1,5 +1,5 @@
 import { useStore } from "@nanostores/react";
-import { modalContents } from "../../store/animationStore";
+import { modalContents } from "../../../store/portfolioStore";
 
 export const ProjectInfo = () => {
   const $modalContents = useStore(modalContents);

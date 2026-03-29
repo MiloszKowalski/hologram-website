@@ -1,8 +1,6 @@
 ---
 import About from "./About/About.astro";
-import Contact from "./Contact/Contact.astro";
-import Portfolio from "./Portfiolio/Portfolio.astro";
-import { projects } from "./Portfiolio/projects";
+import Contact from "../Contact/Contact.astro";
 import TrustedBy from "./TrustedBy/TrustedBy.astro";
 import Welcome from "./Welcome/Welcome.astro";
 // import { Leva } from "leva";
@@ -13,6 +11,7 @@ import { getImage } from "astro:assets";
 import GrainRaw from "../../assets/grain.png";
 import { Image } from "astro:assets";
 import BlueGradient from "../../assets/blue_gradient.png"
+import PortfolioWrapper from "./Portfiolio/PortfolioWrapper.astro";
 // import BackgroundImageRaw from "../../assets/image.png"
 const backgroundImage = await getImage({
   src: GrainRaw,
@@ -108,10 +107,10 @@ import { isMobile } from "react-device-detect";
         >
           <Image src={BlueGradient} alt="" class="absolute opacity-35 md:-z-1 w-full"  format="avif" loading="lazy" />
           <Welcome />
-          <Portfolio projects={projects} />
+          <PortfolioWrapper />
           <TrustedBy />
           <About />
-          <Contact />
+          <Contact phoneNumber="723 052 035" email="kontakt@studiohologram.pl" />
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { modalContents } from "../../store/animationStore";
+import { modalContents } from "../../../store/portfolioStore";
 import { useStore } from "@nanostores/react";
 import type { GetImageResult } from "astro";
 

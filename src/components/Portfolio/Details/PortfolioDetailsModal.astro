@@ -4,13 +4,13 @@ import { SeeTheWholeThingButton } from "./SeeTheWholeThingButton";
 import { StillsGrid } from "./StillsGrid";
 import { getImage } from "astro:assets";
 
-import { contentfulClient } from "../../../../lib/contentful";
-import { toProjects } from "../../../../types/portfolio";
+import { contentfulClient } from "../../../lib/contentful";
+import { toProjects } from "../../../types/portfolio";
 import type { GetImageResult } from "astro";
 import type {
   ProjectCollection,
   TypeProjectSkeleton,
-} from "../../../../types/TypeProject";
+} from "../../../types/TypeProject";
 
 const entries: ProjectCollection =
   await contentfulClient.withoutUnresolvableLinks.getEntries<TypeProjectSkeleton>(
@@ -43,11 +43,15 @@ for (const project of projects) {
 
 <script>
   import {
+    isModalOpen
+  } from "../../../store/globalStore";
+  import {
+    modalContents,
+  } from "../../../store/portfolioStore";
+  import {
     isIntroFinished,
     isMenuVisible,
-    isModalOpen,
-    modalContents,
-  } from "../../store/animationStore";
+  } from "../../LandingPage/store/animationStore";
   import gsap from "gsap";
   import ScrollSmoother from "gsap/ScrollSmoother";
   import { isMobile } from "react-device-detect";
@@ -97,7 +101,7 @@ for (const project of projects) {
   const stills = document.getElementById("portfolio-details-modal-stills");
 
   isModalOpen.listen((isOpen) => {
-    if (!isIntroFinished.get()) {
+    if (window.location.pathname === "" && !isIntroFinished.get()) {
       return;
     }
 
@@ -134,7 +138,7 @@ for (const project of projects) {
 <div class="relative">
   <div
     id="portfolio-details-modal-backdrop"
-    class="hidden opacity-0 pointer-events-auto -mt-28 md:-mt-28 w-screen relative h-screen bg-[rgba(0,0,0,0.58)] backdrop-blur-xs"
+    class="hidden opacity-0 pointer-events-auto -mt-28 md:-mt-25 w-screen relative h-screen bg-[rgba(0,0,0,0.58)] backdrop-blur-xs"
   >
   </div>
   <div

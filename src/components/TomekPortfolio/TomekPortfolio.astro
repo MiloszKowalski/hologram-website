@@ -1,0 +1,199 @@
+---
+import ArrowRight from "../../assets/arrow-right.svg";
+import Instagram from "../../assets/Instagram_simple_icon.svg";
+import InstagramLogo from "../../assets/Instagram_logo.svg";
+import { getImage } from "astro:assets";
+import GrainRaw from "../../assets/grain.png";
+import { Image } from "astro:assets";
+import BlueGradient from "../../assets/blue_gradient.png";
+import Contact from "../Contact/Contact.astro";
+import Portfolio from "../Portfolio/Portfolio.astro";
+import type {
+  ProjectCollection,
+  TypeProjectSkeleton,
+} from "../../types/TypeProject";
+import { contentfulClient } from "../../lib/contentful";
+import { chunkArray } from "../../lib/chunkArray";
+import { toProjects } from "../../types/portfolio";
+import type { TypeProjectsOrderSkeleton } from "../../types/TypeProjectsOrder";
+import type { TypeTomekPersonalActiveProjectsOrderSkeleton } from "../../types/TypeTomekPersonalActiveProjectsOrder";
+
+import WilkuRaw from "../../assets/wilku.png";
+import HorizontalBio from "../Bio/HorizontalBio.astro";
+const Wilku = await getImage({ src: WilkuRaw, format: "webp", width: 265 });
+
+import LogoRaw from "../../assets/logo.png";
+import PortfolioDetailsModal from "../Portfolio/Details/PortfolioDetailsModal.astro";
+import Bio from "../LandingPage/About/Bio/Bio.astro";
+const Logo = await getImage({
+  src: LogoRaw,
+  format: "avif",
+  width: 172,
+  height: 48,
+});
+
+const backgroundImage = await getImage({
+  src: GrainRaw,
+  quality: "low",
+  format: "jpg",
+  widths: [3860, 2560, 1080, 720, 640, 480],
+  fit: "cover",
+});
+
+const entries: ProjectCollection =
+  await contentfulClient.withoutUnresolvableLinks.getEntries<TypeProjectSkeleton>(
+    {
+      content_type: "project",
+    },
+  );
+
+const order =
+  await contentfulClient.withoutUnresolvableLinks.getEntry<TypeTomekPersonalActiveProjectsOrderSkeleton>(
+    "373SIpSvmxcXNMbdZWZ8w6",
+  );
+
+const projectOrderId = order.fields.projectsOrder!.sys.id;
+
+const projectOrder =
+  await contentfulClient.withoutUnresolvableLinks.getEntry<TypeProjectsOrderSkeleton>(
+    projectOrderId,
+  );
+
+const projects = toProjects(entries).filter((x) =>
+  projectOrder!.fields.projects.find(
+    (y) => y?.fields.fullVideoUrl === x.fullVideoUrl,
+  ),
+);
+
+projects.sort(
+  (a, b) =>
+    projectOrder!.fields.projects.findIndex(
+      (x) => x?.fields.fullVideoUrl === a.fullVideoUrl,
+    ) -
+    projectOrder!.fields.projects.findIndex(
+      (x) => x?.fields.fullVideoUrl === b.fullVideoUrl,
+    ),
+);
+
+const projectSegments = chunkArray(projects, 3);
+---
+
+<script>
+  import { useGLTF } from "@react-three/drei";
+  import { ScrollSmoother } from "gsap/ScrollSmoother";
+  import { isMobile } from "react-device-detect";
+  ScrollSmoother.create({
+    smooth: 0.8,
+    effects: !isMobile,
+    smoothTouch: false,
+    normalizeScroll: true,
+  });
+
+  ScrollSmoother.get()!.scrollTo(0, false);
+
+  ScrollSmoother.get()!.paused(false);
+
+  useGLTF.preload("../models/hologram.glb");
+
+  if (isMobile) {
+    const desktopBio = document.getElementById("desktop-bio")
+    desktopBio?.classList.add('hidden')
+  } else {
+    const mobileBio = document.getElementById("mobile-bio")
+    mobileBio?.classList.add('hidden')
+  }
+</script>
+
+<div>
+  <div
+    id="fixed-container"
+    class="w-full h-screen bg-transparent pointer-events-none mt-[12px] md:mt-0 border-t-100 border-transparent left-0 z-50 fixed opacity-100"
+  >
+  <div id="fade-in-overlay" class="bg-[#030a1d] opacity-100 w-full h-full top-0 left-0 fixed flex items-center justify-center text-white text-xl">Ładowanie...</div>
+    <PortfolioDetailsModal />
+  </div>
+  <div id="smooth-wrapper" class="bg-[#01010B]">
+    <img
+      srcset={backgroundImage.srcSet.attribute}
+      alt=""
+      style={{
+        position: "fixed",
+        minHeight: "100vh",
+        minWidth: "100vw",
+        objectFit: "cover",
+        opacity: 0.35,
+      }}
+      {...backgroundImage.attributes}
+    />
+    <div id="smooth-content">
+      <div style={{ position: "relative" }}>
+        <div
+          id="sections-wrapper"
+          class={`w-full relative overflow-hidden`}
+          style={{
+            marginTop: 0,
+            borderRadius: "0 0 0 0",
+            boxShadow: "0px -15px 50px 10px #080a13",
+          }}
+        >
+          <Image
+            src={BlueGradient}
+            alt=""
+            class="absolute top-0 opacity-35 md:-z-1 w-full pointer-events-none"
+            format="avif"
+            loading="lazy"
+          />
+          <a href="https://studiohologram.pl/" target="_blank" class="z-99">
+          <img
+            id="logo"
+            src={Logo.src}
+            srcset={Logo.srcSet.attribute}
+            fetchpriority="high"
+            alt=""
+            width="172px"
+            height="48px"
+            class="h-[48px] w-[172px] z-20 mx-auto my-8 z-99"
+          />
+          </a>
+          <div class="mx-auto mb-36 md:mb-96 flex justify-center">
+            <div id="mobile-bio">
+            <Bio
+              name={`TOMEK\nWILCZYŃSKI`}
+              description={`Reżyser fabularno-reklamowy nagradzanych produkcji. Jego film “Dziewczyna z walizką” został zaprezentowany na 77. Festiwalu Filmowym w Cannes. Laureat nagrody Grand Video Awards za performance #MATA2040 i dwukrotny zwycięzca 48 Hour Film Project. Nominowany do nagrody KTR za głośną kampanię “Nie widzę przeszkód” o niewidomych. Pomysłodawca i założyciel Studio Hologram.`}
+              imgSrc={Wilku.src}
+              filter="contrast(1) brightness(1)"
+            />
+          <a href="https://www.instagram.com/wilkuwilczynski" target="_blank" class="w-max">
+        <div class="grid grid-cols-[auto_153px_auto] mx-auto items-center mt-4 bg-transparent group rounded-full w-max mb-12">
+          <div class="pointer-events-none p-2 h-14 bg-white ml-2 -mr-1 rounded-l-full flex items-center" id="insta-icon">
+          <Instagram
+            width="36px"
+            height="36px"
+            class="h-[36px] w-[36px] **:fill-white z-20 ml-1"
+          />
+          </div>
+          <div id="insta-logo" class="p-2 h-14 bg-white pl-3 pr-0 opacity-100 flex items-center">
+          <InstagramLogo height={48} class="clip" />
+          </div>
+          <div id="arrow" class="p-2 h-14 -ml-px bg-white rounded-r-full flex items-center pr-4">
+          <ArrowRight
+            class="h-5 w-5 **:fill-white invert"
+          />
+          </div>
+        </div>
+        </a></div>:<div id="desktop-bio"><HorizontalBio
+              name={`TOMEK\nWILCZYŃSKI`}
+              description={`Reżyser fabularno-reklamowy nagradzanych produkcji. Jego film “Dziewczyna z walizką” został zaprezentowany na 77. Festiwalu Filmowym w Cannes. Laureat nagrody Grand Video Awards za performance #MATA2040 i dwukrotny zwycięzca 48 Hour Film Project. Nominowany do nagrody KTR za głośną kampanię “Nie widzę przeszkód” o niewidomych. Pomysłodawca i założyciel Studio Hologram.`}
+              imgSrc={Wilku.src}
+              filter="contrast(1) brightness(1)"
+            /></div>
+          </div>
+          <Portfolio projectSegments={projectSegments} header="PORTFOLIO" />
+          <div class="mt-48 md:mt-0">
+          <Contact phoneNumber="723 052 035" email="tomek@studiohologram.pl" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

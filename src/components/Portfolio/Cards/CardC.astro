@@ -1,18 +1,18 @@
 ---
 import { getImage, Image } from "astro:assets";
-import type { Project } from "../../../../types/portfolio";
-import ThumbBg3Raw from "../../../../assets/thumb_bg_3.png";
-import { projects } from "../projects";
-import BlueEllipse from "../../../../assets/blue_ellipse.png";
-import PinkEllipse from "../../../../assets/pink_ellipse.png";
+import type { Project } from "../../../types/portfolio";
+import ThumbBg3Raw from "../../../assets/thumb_bg_3.png";
+import BlueEllipse from "../../../assets/blue_ellipse.png";
+import PinkEllipse from "../../../assets/pink_ellipse.png";
 
 const ThumbBg3 = await getImage({ src: ThumbBg3Raw, format: "avif" });
 
 interface Props {
   project: Project;
+  projectIndex: number;
 }
 
-const { project } = Astro.props;
+const { project, projectIndex } = Astro.props;
 
 const getOptimizedThumbnail = async () =>
   await getImage({
@@ -28,7 +28,8 @@ const id = `card-c-${project.name.replace(" ", "")}`;
 ---
 
 <script>
-  import { isModalOpen, modalContents } from "../../store/animationStore";
+  import { isModalOpen } from "../../../store/globalStore";
+  import { modalContents } from "../../../store/portfolioStore";
 
   class CardC extends HTMLElement {
     connectedCallback() {
@@ -47,7 +48,7 @@ const id = `card-c-${project.name.replace(" ", "")}`;
   class="relative -top-8 md:top-24"
 >
   {
-    (projects.findIndex((x) => x.name === project.name) - 5) % 15 === 0 && (
+    (projectIndex - 5) % 15 === 0 && (
       <Image
         src={BlueEllipse}
         alt=""
@@ -58,7 +59,7 @@ const id = `card-c-${project.name.replace(" ", "")}`;
     )
   }
   {
-    (projects.findIndex((x) => x.name === project.name) - 14) % 15 === 0 && (
+    (projectIndex - 14) % 15 === 0 && (
       <Image
         src={PinkEllipse}
         alt=""

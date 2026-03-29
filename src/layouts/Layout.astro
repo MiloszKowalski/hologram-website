@@ -1,6 +1,12 @@
 ---
 import "../styles/global.css";
 
+interface Props {
+  title?: string
+}
+
+const title = Astro.props.title ?? "Studio Hologram"
+
 const description = `Witaj w Studio Hologram. Jesteśmy warszawskim domem produkcyjnym, w którym każdy film nabiera życia.
 Od ${new Date().getFullYear() - 2019} lat łączymy ludzi i ich historie, które zostawiają ślad.
 Rozgość się i zobacz nasze rzeczy.`;
@@ -18,7 +24,7 @@ Rozgość się i zobacz nasze rzeczy.`;
     <meta name="apple-mobile-web-app-title" content="Studio Hologram" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="generator" content={Astro.generator} />
-    <title>Studio Hologram</title>
+    <title>{title}</title>
     <meta name="description" content={description} />
     <meta property="og:title" content="Studio Hologram" />
     <meta property="og:description" content={description} />

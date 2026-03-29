@@ -5,9 +5,10 @@ interface Props {
   description: string;
   filter: string;
   left?: string;
+  shouldRefreshOnHeightChange?: boolean
 }
 
-const { name, imgSrc, description, left, filter } = Astro.props;
+const { name, imgSrc, description, left, filter, shouldRefreshOnHeightChange } = Astro.props;
 
 const nameWithoutSpaces = name.replaceAll("\n", "").replaceAll(" ", "");
 ---
@@ -16,13 +17,17 @@ const nameWithoutSpaces = name.replaceAll("\n", "").replaceAll(" ", "");
   import SplitText from "gsap/SplitText";
   import { isMobile } from "react-device-detect";
   import { gsap } from "gsap";
-  import { splitTextInstances } from "../../store/animationStore";
+  import { splitTextInstances } from "../../../../store/globalStore";
 
   setTimeout(() => {
     const bioText = document.querySelectorAll("div[id*='bio-text-']");
 
     for (const text of bioText) {
       const nameWithoutSpaces = text.id.replace("bio-text-", "");
+
+      const paragraph = document.getElementById(`bio-text-${nameWithoutSpaces}`)
+
+      const shouldRefreshOnHeightChange = paragraph?.dataset.shouldRefreshOnHeightChange
 
       const split = SplitText.create(`#bio-text-${nameWithoutSpaces}`, {
         type: "lines",
@@ -46,8 +51,11 @@ const nameWithoutSpaces = name.replaceAll("\n", "").replaceAll(" ", "");
           });
         },
       });
+      
 
-      splitTextInstances.add({ name: nameWithoutSpaces, x: split });
+      if (shouldRefreshOnHeightChange) {
+        splitTextInstances.add({ name: nameWithoutSpaces, x: split });
+      }
     }
   }, 250);
 </script>
@@ -70,7 +78,7 @@ const nameWithoutSpaces = name.replaceAll("\n", "").replaceAll(" ", "");
   >
     {name}
   </h2>
-  <div id={`bio-text-${nameWithoutSpaces}`} class="relative md:left-8">
+  <div id={`bio-text-${nameWithoutSpaces}`} class="relative md:left-8" data-shouldRefreshOnHeightChange={shouldRefreshOnHeightChange}>
     <p
       class="font-[Chivo_Mono] text-white md:w-[35ch] whitespace-pre-line text-sm"
     >

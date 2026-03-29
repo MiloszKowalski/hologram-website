@@ -1,0 +1,121 @@
+---
+import ArrowRight from "../../assets/arrow-right.svg";
+import Instagram from "../../assets/Instagram_simple_icon.svg";
+import InstagramLogo from "../../assets/Instagram_logo.svg";
+
+interface Props {
+  imgSrc: string;
+  name: string;
+  description: string;
+  filter: string;
+  left?: string;
+  shouldRefreshOnHeightChange?: boolean
+}
+
+const { name, imgSrc, description, left, filter, shouldRefreshOnHeightChange } = Astro.props;
+
+const nameWithoutSpaces = name.replaceAll("\n", "").replaceAll(" ", "");
+---
+
+<script>
+  import SplitText from "gsap/SplitText";
+  import { gsap } from "gsap";
+  import { splitTextInstances } from "../../store/globalStore";
+
+  setTimeout(() => {
+    const bioText = document.querySelectorAll("div[id*='bio-text-']");
+
+    for (const text of bioText) {
+      const nameWithoutSpaces = text.id.replace("bio-text-", "");
+
+      const paragraph = document.getElementById(`bio-text-${nameWithoutSpaces}`)
+
+      const shouldRefreshOnHeightChange = paragraph?.dataset.shouldRefreshOnHeightChange
+
+      const split = SplitText.create(`#bio-text-${nameWithoutSpaces}`, {
+        type: "lines",
+        autoSplit: true,
+        mask: "lines",
+        aria: "none",
+        linesClass: "bio-line",
+        onSplit: (self) => {
+          const fadeInOverlay = document.getElementById("fade-in-overlay")
+          gsap.to(fadeInOverlay, {
+            opacity: 0,
+            duration: 0.25
+          })
+
+          return gsap.fromTo(self.lines, {
+            y: 100,
+            opacity: 0,
+          }, {
+            y: 0,
+            opacity: 1,
+            stagger: 0.1,
+            duration: 0.75,
+            ease: "power2.out"
+          });
+        },
+      });
+
+      if (shouldRefreshOnHeightChange === "true") {
+        splitTextInstances.add({ name: nameWithoutSpaces, x: split });
+      }
+
+    }
+  }, 250);
+
+
+</script>
+
+<article
+  id={`bio-${nameWithoutSpaces}`}
+  class="flex flex-row items-start p-8"
+>
+<div>
+  <img
+    class=`rounded-full w-4/5`
+    style=`filter: ${filter}`
+    src={imgSrc}
+    alt=""
+    loading="lazy"
+  />
+  <h2
+    class={`text-white text-2xl font-[Aktiv_Grotesk_Ex] font-extrabold whitespace-pre-line relative -top-8 ${
+      !left && "-left-8"
+    } md:right-10 ${left}`}
+  >
+    {name}
+  </h2>
+  </div>
+  <div id={`bio-text-${nameWithoutSpaces}`} class="relative mt-12" data-shouldRefreshOnHeightChange={shouldRefreshOnHeightChange}>
+    <p
+      class="font-[Chivo_Mono] text-white md:w-[85ch] mt-1 whitespace-pre-line text-sm"
+    >
+      {description}
+    </p>
+    <div class="w-max ml-auto">
+    <a href="https://www.instagram.com/wilkuwilczynski" target="_blank" class="w-max">
+        <div class="grid grid-cols-[auto_0px_auto] hover:grid-cols-[auto_153px_auto] items-center mt-4 bg-transparent group rounded-full w-max transition-all duration-200">
+          <div class="pointer-events-none bg-transparent p-2 h-14 group-hover:bg-white transition-all ml-2 -mr-1 duration-200 rounded-l-full flex items-center" id="insta-icon">
+
+          
+          <Instagram
+            width="36px"
+            height="36px"
+            class="h-[36px] w-[36px] **:fill-white z-20 invert group-hover:invert-0 ml-1 duration-200"
+          />
+          </div>
+          <div id="insta-logo" class="bg-transparent p-2 h-14 group-hover:bg-white pl-3 pr-0 group-hover:opacity-100 group-hover:visible transition-all invisible flex items-center duration-200">
+          <InstagramLogo height={48} class="clip" />
+          </div>
+          <div id="arrow" class="bg-transparent p-2 h-14 group-hover:bg-white transition-colors rounded-r-full flex items-center duration-200 pr-4">
+          <ArrowRight
+            class="h-5 w-5 **:fill-white group-hover:invert transition-all duration-200"
+          />
+          </div>
+        </div>
+        </a>
+        </div>
+  </div>
+</article>
