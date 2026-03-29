@@ -1,0 +1,52 @@
+---
+import { contentfulClient } from "../../../lib/contentful";
+import { toProjects } from "../../../types/portfolio";
+import type { TypeActiveProjectOrderSkeleton } from "../../../types/TypeActiveProjectsOrder";
+import type { TypeProjectsOrderSkeleton } from "../../../types/TypeProjectsOrder";
+import type {
+  ProjectCollection,
+  TypeProjectSkeleton,
+} from "../../../types/TypeProject";
+import { chunkArray } from "../../../lib/chunkArray";
+import Portfolio from "../../Portfolio/Portfolio.astro";
+
+const entries: ProjectCollection =
+  await contentfulClient.withoutUnresolvableLinks.getEntries<TypeProjectSkeleton>(
+    {
+      content_type: "project",
+    },
+  );
+
+const order =
+  await contentfulClient.withoutUnresolvableLinks.getEntry<TypeActiveProjectOrderSkeleton>(
+    "4Fcgrygz89xCxjSlKZfFlv",
+  );
+
+const projectOrderId = order.fields.projectOrder!.sys.id;
+
+const projectOrder =
+  await contentfulClient.withoutUnresolvableLinks.getEntry<TypeProjectsOrderSkeleton>(
+    projectOrderId,
+  );
+
+const projects = toProjects(entries).filter(x => projectOrder!.fields.projects.find(y => y?.fields.fullVideoUrl === x.fullVideoUrl));
+
+projects.sort(
+  (a, b) =>
+    projectOrder!.fields.projects.findIndex(
+      (x) => x?.fields.fullVideoUrl === a.fullVideoUrl,
+    ) -
+    projectOrder!.fields.projects.findIndex(
+      (x) => x?.fields.fullVideoUrl === b.fullVideoUrl,
+    ),
+);
+
+const projectSegments = chunkArray(projects, 3);
+---
+<script>
+import { shouldContractPortfolio } from "../../../store/portfolioStore";
+import { isSceneInView } from "../store/animationStore";
+
+  isSceneInView.subscribe(isInView => shouldContractPortfolio.set(isInView))
+</script>
+<Portfolio projectSegments={projectSegments} header="NASZE PROJEKTY" />

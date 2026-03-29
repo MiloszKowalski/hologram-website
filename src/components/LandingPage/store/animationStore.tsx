@@ -11,8 +11,6 @@ export const pinnedChild = atom(<></>);
 
 export const parentCounter = atom(0);
 
-export const modalContents = atom<Project | null>(null);
-
 export const isModalOpen = atom(false);
 
 export const isMenuVisible = atom(false);
@@ -32,8 +30,3 @@ export const isMenuExpanded = atom(false);
 export const isShowreelPlayerVisible = atom(false);
 
 export const areButtonsVisible = atom(false);
-
-export const splitTextInstances = new Set<{
-  name: string;
-  x: globalThis.SplitText;
-}>();

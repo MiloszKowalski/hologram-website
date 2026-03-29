@@ -1,19 +1,19 @@
 ---
 import { Fragment } from "react";
-import type { Project } from "../../../../types/portfolio";
+import type { Project } from "../../../types/portfolio";
 import { cn } from "clsx-for-tailwind";
 import { getImage, Image } from "astro:assets";
-import ThumbBg2Raw from "../../../../assets/thumb_bg_2.png";
-import { projects } from "../projects";
-import BlueSpotlight from "../../../../assets/blue_spotlight.png";
+import ThumbBg2Raw from "../../../assets/thumb_bg_2.png";
+import BlueSpotlight from "../../../assets/blue_spotlight.png";
 
 const ThumbBg2 = await getImage({ src: ThumbBg2Raw, format: "avif" });
 
 interface Props {
   project: Project;
+  projectIndex: number
 }
 
-const { project } = Astro.props;
+const { project, projectIndex } = Astro.props;
 
 const getOptimizedThumbnail = async () =>
   await getImage({
@@ -29,12 +29,15 @@ const id = `card-a-${project.name.replace(" ", "")}`;
 ---
 
 <script>
-  import { isModalOpen, modalContents } from "../../store/animationStore";
+  import { isModalOpen } from "../../../store/globalStore";
+  import { modalContents } from "../../../store/portfolioStore";
 
   class CardA extends HTMLElement {
     connectedCallback() {
       this.addEventListener("click", () => {
         modalContents.set(JSON.parse(this.dataset.project!));
+        console.log("opening modal");
+        
         isModalOpen.set(true);
       });
     }
@@ -49,7 +52,7 @@ const id = `card-a-${project.name.replace(" ", "")}`;
   class="md:mb-0 my-4 md:my-0 md:pt-24 scale-100 origin-top mx-auto aspect-video rounded-2xl w-full md:w-2/3 h-auto relative z-8 top-4 md:top-0"
 >
   {
-    projects.findIndex((x) => x.name === project.name) % 15 === 0 && (
+    projectIndex % 15 === 0 && (
       <Image
         src={BlueSpotlight}
         alt=""

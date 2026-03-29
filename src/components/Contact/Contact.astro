@@ -1,6 +1,13 @@
 ---
 import { Image } from "astro:assets"
-import BlueSpotlight from "../../../assets/blue_spotlight.png"
+import BlueSpotlight from "../../assets/blue_spotlight.png"
+
+interface Props {
+  phoneNumber: string;
+  email: string;
+}
+
+const { phoneNumber, email } = Astro.props
 ---
 <section
   id="contact"
@@ -10,11 +17,11 @@ import BlueSpotlight from "../../../assets/blue_spotlight.png"
 
   <h1 class="text-3xl font-bold z-10">KONTAKT</h1>
   <p class="my-16 font-[Chivo_Mono] z-10">Zadzwoń i zróbmy coś razem!</p>
-  <a href="tel:723052035" class="z-10">
-    <h2 class="text-xl md:text-2xl my-1 font-[Chivo_Mono]">tel. 723 052 035</h2>
+  <a href=`tel:${phoneNumber.replaceAll(' ', '')}` class="z-10">
+    <h2 class="text-xl md:text-2xl my-1 font-[Chivo_Mono]">tel. {phoneNumber}</h2>
   </a>
   <h2 class="text-xl md:text-2xl my-1 font-[Chivo_Mono] z-10">
-    kontakt@studiohologram.pl
+    {email}
   </h2>
 
   <div

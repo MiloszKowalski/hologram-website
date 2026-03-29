@@ -1,18 +1,18 @@
 ---
 import { getImage, Image } from "astro:assets";
-import type { Project } from "../../../../types/portfolio";
-import ThumbBg1Raw from "../../../../assets/thumb_bg_1.png";
-import { projects } from "../projects";
+import type { Project } from "../../../types/portfolio";
+import ThumbBg1Raw from "../../../assets/thumb_bg_1.png";
 
-import PinkSpotlight from "../../../../assets/pink_spotlight.png";
+import PinkSpotlight from "../../../assets/pink_spotlight.png";
 
 const ThumbBg1 = await getImage({ src: ThumbBg1Raw, format: "avif" });
 
 interface Props {
   project: Project;
+  projectIndex: number
 }
 
-const { project } = Astro.props;
+const { project,projectIndex } = Astro.props;
 
 const getOptimizedThumbnail = async () =>
   await getImage({
@@ -28,7 +28,8 @@ const id = `card-b-${project.name.replace(" ", "")}`;
 ---
 
 <script>
-  import { isModalOpen, modalContents } from "../../store/animationStore";
+  import { isModalOpen } from "../../../store/globalStore";
+  import { modalContents } from "../../../store/portfolioStore";
 
   class CardB extends HTMLElement {
     connectedCallback() {
@@ -47,7 +48,7 @@ const id = `card-b-${project.name.replace(" ", "")}`;
   class="relative z-0 md:top-36"
 >
   {
-    (projects.findIndex((x) => x.name === project.name) - 10) % 15 === 0 && (
+    (projectIndex - 10) % 15 === 0 && (
       <Image
         src={PinkSpotlight}
         alt=""
