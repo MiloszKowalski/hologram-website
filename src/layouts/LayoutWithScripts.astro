@@ -1,0 +1,86 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string
+}
+
+const title = Astro.props.title ?? "Studio Hologram"
+
+const description = `Witaj w Studio Hologram. Jesteśmy warszawskim domem produkcyjnym, w którym każdy film nabiera życia.
+Od ${new Date().getFullYear() - 2019} lat łączymy ludzi i ich historie, które zostawiają ślad.
+Rozgość się i zobacz nasze rzeczy.`;
+---
+
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Studio Hologram" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content="Studio Hologram" />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://studiohologram.pl" />
+    <meta property="og:image" content="https://studiohologram.pl/ogp.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chivo+Mono:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+      fetchpriority="low"
+    />
+    <script type="text/javascript">
+      !(function () {
+        ((window.semaphore = window.semaphore || []),
+          (window.ketch = function () {
+            window.semaphore.push(arguments);
+          }));
+        var e = document.createElement("script");
+        ((e.type = "text/javascript"),
+          (e.src =
+            "https://global.ketchcdn.com/web/v3/config/prestidigital/website_smart_tag/boot.js"),
+          (e.defer = e.async = !0),
+          document.getElementsByTagName("head")[0].appendChild(e));
+      })();
+    </script>
+    <!-- Mirosoft Clarity (website insights) script -->
+    <script type="text/javascript">
+      (function (c, l, a, r, i, t, y) {
+        c[a] =
+          c[a] ||
+          function () {
+            (c[a].q = c[a].q || []).push(arguments);
+          };
+        t = l.createElement(r);
+        t.async = 1;
+        t.src = "https://www.clarity.ms/tag/" + i;
+        y = l.getElementsByTagName(r)[0];
+        y.parentNode.insertBefore(t, y);
+      })(window, document, "clarity", "script", "v51h8yuwiv");
+    </script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+
+<style>
+  html,
+  body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    font-family: "Aktiv Grotesk Ex";
+    text-rendering: geometricPrecision;
+    background-color: #030a1d;
+  }
+</style>
